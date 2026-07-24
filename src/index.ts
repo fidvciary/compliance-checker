@@ -81,3 +81,7 @@ export { buildSelfComplianceToolReport } from './report/self-compliance-tool.js'
 export { buildMethodologyAppendix } from './report/methodology.js';
 export { generateTpaRequestLetter, buildDataUnavailabilityAppendix } from './report/tpa-request-letter.js';
 export { AttorneyReviewGate, AttorneyGateError, approvalHash } from './attorney/review-gate.js';
+
+// LLM boundary + prompt-version pinning
+export { recordLlmCall, collectPromptVersions } from './llm/prompt-pinning.js';
+export type { CandidateExtractor, NarrativeDrafter, LlmCallRecord } from './llm/prompt-pinning.js';
