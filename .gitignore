@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.vitest/
+
+# Engine run output (analysis artifacts may contain plan data — never commit)
+/output/
+/runs/
+*.audit.jsonl
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Env
+.env
+.env.local

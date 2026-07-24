@@ -1,0 +1,21 @@
+id: "state:ca"
+title: "California Mental Health Parity requirements"
+authority_type: regulation
+citation: "California state parity statute and department of insurance data calls (stub — verify specific citations before reliance)"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: fully_insured
+jurisdiction: CA
+note: >
+  STUB state ruleset. California maintains parity requirements and/or data calls
+  independent of the federal non-enforcement posture. Specific statutory
+  citations and current data-call requirements must be confirmed before any
+  finding relies on this ruleset. Direct application to self-funded ERISA plans
+  is limited by preemption; methodology remains instructive.
+provisions:
+  - id: state_parity_general
+    citation: "California parity statute (verify)"
+    summary: >
+      General state parity requirement; placeholder pending citation verification.
+    tags: [state, placeholder]

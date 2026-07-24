@@ -1,0 +1,56 @@
+id: "guidance:warning-signs"
+title: "DOL 'Warning Signs — Plan or Policy NQTLs that Require Additional Analysis'"
+authority_type: subregulatory_guidance
+citation: "U.S. Dep't of Labor, EBSA, Warning Signs — Plan or Policy Non-Quantitative Treatment Limitations (NQTLs) that Require Additional Analysis to Determine Mental Health Parity Compliance"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  Sub-regulatory guidance enumerating NQTL patterns that warrant additional
+  analysis. Grounds the deterministic warning-sign scanner (Categories I-V). A
+  warning sign indicates a provision requires further analysis; it is not itself
+  a determination of noncompliance.
+provisions:
+  - id: category_I_preauth
+    citation: "Warning Signs, Category I (Preauthorization / Pre-service Notification)"
+    summary: >
+      Blanket preauth for MH/SUD only; facility-admission preauth for MH/SUD
+      only; more frequent concurrent review for MH/SUD; medical necessity review
+      delegated to a different authority using different criteria for MH/SUD.
+    tags: [warning_sign, prior_auth, concurrent_review, category_I]
+  - id: category_II_fail_first
+    citation: "Warning Signs, Category II (Fail-First / Step Therapy)"
+    summary: >
+      Requirement to document progress in prior treatment; requirement that prior
+      levels of care be exhausted; requirement that PHP be attempted before
+      inpatient MH/SUD.
+    tags: [warning_sign, step_therapy, category_II]
+  - id: category_III_probability_improvement
+    citation: "Warning Signs, Category III (Probability of Improvement)"
+    summary: >
+      Likelihood-of-improvement exclusions; measurable-improvement-within-N-days
+      requirements applied only to MH/SUD.
+    tags: [warning_sign, probability_of_improvement, category_III]
+  - id: category_IV_written_treatment_plan
+    citation: "Warning Signs, Category IV (Written Treatment Plan)"
+    summary: >
+      Written treatment plan required only for MH/SUD; N-day submission
+      requirements; periodic resubmission requirements without an M/S analog.
+    tags: [warning_sign, treatment_plan, category_IV]
+  - id: category_V_other_structural
+    citation: "Warning Signs, Category V (Other)"
+    summary: >
+      Patient non-compliance exclusions; residential day limits with no M/S
+      analog; geographic limitations; provider licensure restrictions more
+      restrictive than for M/S (e.g., excluding LMFT/LPC/LCSW or requiring MD
+      supervision only for MH/SUD).
+    tags: [warning_sign, structural, licensure, geographic, category_V]
+  - id: dual_administrator
+    citation: "Warning Signs, Category I (delegation) — dual UM administrator pattern"
+    summary: >
+      Different entities performing UM for M/S vs. MH/SUD, or different medical
+      necessity criteria sets, is a named warning sign and a recurring litigation
+      fact pattern.
+    tags: [warning_sign, dual_vendor, category_I]

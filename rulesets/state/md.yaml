@@ -1,0 +1,21 @@
+id: "state:md"
+title: "Maryland Mental Health Parity market conduct requirements"
+authority_type: enforcement_action
+citation: "Md. Code, Ins. § 15-802 et seq.; Maryland Insurance Administration market conduct examination reports"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: fully_insured
+jurisdiction: MD
+note: >
+  Maryland market conduct exam reports are used as (a) compliant-analysis
+  reference exemplars and (b) a source of state-level detection patterns. As
+  with all state authorities, direct application to self-funded ERISA plans is
+  limited by preemption; the methodology remains instructive.
+provisions:
+  - id: market_conduct_detection_patterns
+    citation: "MIA market conduct examination reports"
+    summary: >
+      Exam findings supply recurring NQTL detection patterns and exemplars of
+      analyses the regulator accepted or rejected.
+    tags: [nqtl, exemplar, state]

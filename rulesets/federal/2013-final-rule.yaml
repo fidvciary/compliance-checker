@@ -1,0 +1,82 @@
+id: "federal:2013"
+title: "MHPAEA 2013 Final Rule"
+authority_type: regulation
+citation: "29 CFR § 2590.712; 45 CFR § 146.136; 26 CFR § 54.9812-1; 78 FR 68240 (Nov. 13, 2013)"
+enforcement_status: enforced
+effective_date: "2014-07-01" # applicable to plan years beginning on or after Jul 1, 2014
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  The 2013 final rule remains in force and enforced. It supplies the operative
+  QTL/FR substantially-all and predominant tests, the six-classification scheme,
+  the cumulative-financial-requirement prohibition, and the general NQTL standard.
+  It is the primary regulatory basis for as-written QTL/FR determinations.
+provisions:
+  - id: six_classifications
+    citation: "29 CFR § 2590.712(c)(2)(ii)"
+    summary: >
+      Six classifications of benefits: inpatient in-network, inpatient
+      out-of-network, outpatient in-network, outpatient out-of-network,
+      emergency care, and prescription drugs. Parity is tested within a
+      classification.
+    tags: [classification]
+  - id: outpatient_subclassification
+    citation: "29 CFR § 2590.712(c)(3)(iii)(C)"
+    summary: >
+      Permitted sub-classification of the outpatient classification into
+      (1) office visits and (2) all other outpatient items and services.
+    tags: [classification, subclassification]
+  - id: tiered_network_subclassification
+    citation: "29 CFR § 2590.712(c)(3)(iii)(A)"
+    summary: >
+      Permitted sub-classification by network tier where a plan uses multiple
+      network tiers, provided the tiering is based on reasonable factors and not
+      based on whether a provider treats MH/SUD conditions.
+    tags: [classification, subclassification, network_tier]
+  - id: substantially_all_test
+    citation: "29 CFR § 2590.712(c)(3)(i)(A)"
+    summary: >
+      A type of financial requirement or quantitative treatment limitation may
+      be applied to MH/SUD benefits in a classification only if it applies to at
+      least two-thirds of all M/S benefits in that classification (measured by
+      dollar amount of plan payments, using a reasonable projection method).
+    tags: [qtl, financial_requirement, substantially_all]
+  - id: predominant_test
+    citation: "29 CFR § 2590.712(c)(3)(i)(B)"
+    summary: >
+      Among M/S benefits subject to the financial requirement or QTL, the level
+      that applies to more than one-half is the predominant level and the maximum
+      that may be applied to MH/SUD benefits. Where no single level exceeds
+      one-half, levels are combined from most-to-least restrictive until the
+      combination exceeds one-half.
+    tags: [qtl, financial_requirement, predominant]
+  - id: cumulative_financial_requirements
+    citation: "29 CFR § 2590.712(c)(3)(v)"
+    summary: >
+      A plan may not apply any cumulative financial requirement or cumulative
+      quantitative treatment limitation (e.g., deductible, out-of-pocket maximum)
+      to MH/SUD benefits in a classification that accumulates separately from the
+      same requirement for M/S benefits in that classification. Bright-line.
+    tags: [qtl, cumulative, facial]
+  - id: nqtl_general_standard
+    citation: "29 CFR § 2590.712(c)(4)(i)"
+    summary: >
+      A plan may not impose an NQTL on MH/SUD benefits in a classification unless,
+      under the terms of the plan as written and in operation, any processes,
+      strategies, evidentiary standards, or other factors used in applying the
+      NQTL to MH/SUD benefits are comparable to, and applied no more stringently
+      than, those used in applying the NQTL to M/S benefits in the classification.
+    tags: [nqtl, comparability, stringency]
+  - id: aggregate_lifetime_annual_dollar_limits
+    citation: "29 CFR § 2590.712(b)"
+    summary: >
+      Rules for aggregate lifetime and annual dollar limits on MH/SUD benefits
+      relative to M/S benefits.
+    tags: [qtl, dollar_limits, facial]
+  - id: availability_of_criteria
+    citation: "29 CFR § 2590.712(d)"
+    summary: >
+      Criteria for medical necessity determinations and the reason for any denial
+      of MH/SUD benefits must be made available on request.
+    tags: [nqtl, medical_necessity, disclosure]

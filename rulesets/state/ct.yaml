@@ -1,0 +1,32 @@
+id: "state:ct"
+title: "Connecticut Mental Health Parity requirements"
+authority_type: regulation
+citation: "Conn. Gen. Stat. § 38a-488a; § 38a-514; CID data calls; 2026 CT Mental Health Parity Report"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: fully_insured
+jurisdiction: CT
+note: >
+  State regulators are NOT bound by the federal non-enforcement statement.
+  Connecticut parity requirements and data calls continue independently. The
+  2026 CT Mental Health Parity Report cited reimbursement-methodology findings
+  against all five major CT carriers. IMPORTANT: the CT reimbursement findings
+  addressed fully-insured products. Application to ASO / self-funded arrangements
+  is an OPEN QUESTION and must be flagged as such, not asserted. Self-funded
+  ERISA plans are generally not directly subject to state insurance mandates
+  (ERISA preemption), but the analytic methodology is still instructive.
+provisions:
+  - id: reimbursement_methodology_comparability
+    citation: "2026 CT Mental Health Parity Report (reimbursement methodology findings)"
+    summary: >
+      Reimbursement rate methodology for MH/SUD providers must be comparable to
+      and applied no more stringently than for M/S providers. Non-comparative
+      methodologies were cited as a recurring CT finding.
+    tags: [nqtl, reimbursement, network_composition, state]
+  - id: data_call_classification_consistency
+    citation: "CT CID data call instructions"
+    summary: >
+      Classifications used for QTL testing and NQTL testing must be consistent;
+      combining or re-classifying between analyses is not permitted.
+    tags: [classification, consistency, state]

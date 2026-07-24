@@ -1,0 +1,30 @@
+id: "state:wv"
+title: "West Virginia Mental Health Parity data call / submission form"
+authority_type: regulation
+citation: "W. Va. Code § 33-16-3a et seq.; WV OIC parity data call submission form instructions"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: fully_insured
+jurisdiction: WV
+note: >
+  The WV parity submission form instructions supply two structural rules the
+  engine enforces at the data-model level: (1) analyses may not be combined
+  across classifications — each NQTL x classification gets its own six-step
+  analysis; and (2) classifications are shared between QTL and NQTL testing and
+  may not be reclassified or sub-classified for one and not the other. The
+  report is laid out to be directly responsive to this submission form.
+provisions:
+  - id: no_combining_across_classifications
+    citation: "WV submission form instructions"
+    summary: >
+      A separate NQTL analysis is required per classification; prior auth for
+      inpatient in-network is distinct from inpatient out-of-network. Combining
+      analyses across classifications is prohibited.
+    tags: [nqtl, six_step, cardinality, state]
+  - id: classification_consistency_lock
+    citation: "WV submission form instructions"
+    summary: >
+      Once classifications are set they are shared between QTL and NQTL testing;
+      reclassifying or sub-classifying for one and not the other is prohibited.
+    tags: [classification, consistency, state]

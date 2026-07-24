@@ -1,0 +1,16 @@
+id: "federal:2026"
+title: "MHPAEA 2026 Replacement Rule (anticipated)"
+authority_type: regulation
+citation: "Not yet proposed. Anticipated per Departments' status report dated March 30, 2026 in ERIC v. HHS (D.D.C.)."
+enforcement_status: not_yet_proposed
+effective_date: null
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  STUB. The Departments stated on March 30, 2026 an intent to propose
+  replacement regulations with a target date of December 31, 2026. No text
+  exists yet. This ruleset is present so the engine can be re-parameterized the
+  day a proposed rule lands without a code change. No provisions may be relied
+  upon; none are defined.
+provisions: []

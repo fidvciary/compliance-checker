@@ -1,0 +1,55 @@
+id: "guidance:self-compliance-tool"
+title: "DOL Self-Compliance Tool for MHPAEA (2020)"
+authority_type: subregulatory_guidance
+citation: "U.S. Dep't of Labor, EBSA, Self-Compliance Tool for the Mental Health Parity and Addiction Equity Act (2020 update)"
+enforcement_status: enforced
+effective_date: "2020-10-01"
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  Sub-regulatory guidance. Structures the Self-Compliance Tool report (Sections
+  A-H, Appendix I documentation checklist, Appendix II reimbursement comparison).
+  CRITICAL FRAMING (Appendix II): disparate outcomes are WARNING SIGNS indicating
+  a provision "may warrant further review," NOT violations. Any code path that
+  emits a violation from a data disparity alone is a bug.
+provisions:
+  - id: outcomes_are_warning_signs_not_violations
+    citation: "Self-Compliance Tool, Appendix II"
+    summary: >
+      Disparate outcomes are warning signs that a provision may warrant further
+      review; they are not, standing alone, determinations of noncompliance.
+      In-operation findings must be phrased as indicators requiring process
+      investigation.
+    tags: [in_operation, framing, warning_sign]
+  - id: reimbursement_rate_comparison
+    citation: "Self-Compliance Tool, Appendix II (reimbursement rate table)"
+    summary: >
+      Compares provider reimbursement as a percentage of Medicare across M/S
+      comparison specialties (orthopedic surgery, cardiology, internal medicine,
+      endocrinology, gastroenterology) and MH/SUD E&M and psychotherapy codes.
+    tags: [in_operation, reimbursement, medicare_benchmark]
+  - id: standardized_factor_list
+    citation: "Self-Compliance Tool, NQTL section (factors)"
+    summary: >
+      DOL standardized factor list for NQTL design/application (excessive
+      utilization, recent medical cost escalation, provider discretion, lack of
+      clinical efficacy, high variability in cost per episode, high variation in
+      length of stay, lack of adherence to quality standards, high fraud
+      incidence, current and projected demand).
+    tags: [nqtl, factors, six_step]
+  - id: evidentiary_source_list
+    citation: "Self-Compliance Tool, NQTL section (evidentiary standards)"
+    summary: >
+      Evidentiary-source list (internal claims analysis, medical expert review,
+      state/federal requirements, national accreditation standards, internal
+      market/competitive analysis, Medicare fee schedules, published clinical
+      standards such as ASAM or ICSI).
+    tags: [nqtl, evidentiary_standards, six_step]
+  - id: sections_a_through_h
+    citation: "Self-Compliance Tool, Sections A-H"
+    summary: >
+      Framework sections the compliance report mirrors so an investigator sees
+      their own framework (annual/lifetime limits, financial requirements and
+      QTLs, cumulative FRs, NQTLs, disclosure, and the compliance program).
+    tags: [report, self_compliance_tool]

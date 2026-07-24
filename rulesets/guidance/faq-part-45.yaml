@@ -1,0 +1,45 @@
+id: "guidance:faq-part-45"
+title: "FAQs About MHPAEA Implementation Part 45"
+authority_type: subregulatory_guidance
+citation: "FAQs About Mental Health and Substance Use Disorder Parity Implementation and the CAA, 2021 Part 45 (DOL/HHS/Treasury)"
+enforcement_status: enforced
+effective_date: null
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  Sub-regulatory guidance. Q3 enumerates common insufficiencies in comparative
+  analyses. These prohibitions ground the sufficiency linter that runs on every
+  drafted narrative section before it is eligible for attorney review. This is
+  what keeps output from reading like TPA boilerplate, which regulators reject.
+provisions:
+  - id: prohibit_conclusory_statements
+    citation: "FAQ Part 45, Q3"
+    summary: >
+      Conclusory or generalized statements, or bare recitation of the legal
+      standard, do not satisfy the comparative-analysis requirement.
+    tags: [linter, sufficiency, documentation_gap]
+  - id: prohibit_factors_without_explanation
+    citation: "FAQ Part 45, Q3"
+    summary: >
+      Identifying factors or processes without explaining how they were defined
+      and applied in practice is insufficient.
+    tags: [linter, sufficiency, documentation_gap]
+  - id: prohibit_document_dumps
+    citation: "FAQ Part 45, Q3"
+    summary: >
+      Production of documents without explaining each document's relevance is
+      insufficient.
+    tags: [linter, sufficiency, documentation_gap]
+  - id: prohibit_tables_in_place_of_analysis
+    citation: "FAQ Part 45, Q3"
+    summary: >
+      Side-by-side plan-term tables presented in place of textual comparative
+      analysis are insufficient.
+    tags: [linter, sufficiency, documentation_gap]
+  - id: prohibit_bob_or_aggregated_data
+    citation: "FAQ Part 45, Q3"
+    summary: >
+      Data presented at book-of-business level rather than plan level, or
+      aggregated across classifications, is insufficient.
+    tags: [linter, sufficiency, documentation_gap, in_operation]

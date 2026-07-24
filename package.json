@@ -1,0 +1,30 @@
+{
+  "name": "@fidvciary/parity-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MHPAEA parity compliance analysis engine for self-funded employer group health plans.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "parity": "./src/cli.ts"
+  },
+  "scripts": {
+    "parity": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}

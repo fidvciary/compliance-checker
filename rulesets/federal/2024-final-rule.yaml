@@ -1,0 +1,67 @@
+id: "federal:2024"
+title: "MHPAEA 2024 Final Rule"
+authority_type: regulation
+citation: "45 CFR § 146.137; 29 CFR § 2590.712 (as amended); 89 FR 77586 (Sept. 23, 2024)"
+enforcement_status: non_enforced_federal
+effective_date: "2025-01-01" # first applicability date for the 2024 amendments
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  LITIGATION / ENFORCEMENT POSTURE (as of July 2026): The 2024 final rule is
+  subject to a federal non-enforcement policy announced May 15, 2025 in
+  connection with ERISA Industry Committee (ERIC) v. HHS (D.D.C.). In a status
+  report dated March 30, 2026 the Departments stated they will not defend the
+  rule and intend to propose replacement regulations, with a target date of
+  December 31, 2026. Findings depending only on this ruleset are ADVISORY — NOT
+  CURRENTLY FEDERALLY ENFORCED and are segregated in the report. The rule's
+  comparative-analysis content structure and the "meaningful benefits" / network
+  composition data expectations remain the best available statement of federal
+  expectations and are prudent to prepare for. This posture is data, not a
+  determination; confirm current status before relying on it.
+provisions:
+  - id: comparative_analysis_content_six_step
+    citation: "45 CFR § 146.137(c)"
+    summary: >
+      Specifies the required content of the NQTL comparative analysis: (1) NQTL
+      description and plan terms; (2) factors and evidentiary standards; (3) how
+      factors are used in design and application; (4) demonstration of
+      comparability and stringency as written; (5) demonstration in operation;
+      (6) findings and conclusions.
+    tags: [nqtl, six_step, comparative_analysis]
+  - id: scope_as_written
+    citation: "45 CFR § 146.137(c)(4)"
+    summary: "Demonstration of comparability and stringency as written."
+    tags: [nqtl, as_written, scope]
+  - id: scope_in_operation
+    citation: "45 CFR § 146.137(c)(5)"
+    summary: "Demonstration of comparability and stringency in operation, using relevant data."
+    tags: [nqtl, in_operation, scope]
+  - id: relevant_data_evaluation
+    citation: "45 CFR § 146.136(c)(4)(iii)"
+    summary: >
+      Requirement to evaluate relevant data (e.g., utilization, denials, network
+      composition) in applying an NQTL, and to document reasons where relevant
+      data are temporarily unavailable or do not exist.
+    tags: [in_operation, relevant_data, data_availability]
+  - id: data_unavailability_documentation
+    citation: "45 CFR § 146.136(c)(4)(iii)(A)(3)"
+    summary: >
+      Where relevant data are not available, the plan must document why and what
+      it will do to obtain and evaluate the data. The engine produces this
+      documentation as an output rather than silently skipping tests.
+    tags: [in_operation, data_availability, documentation]
+  - id: meaningful_benefits
+    citation: "45 CFR § 146.136(c)(2)(ii)"
+    summary: >
+      Where a plan provides any benefits for a MH/SUD condition in a
+      classification, it must provide meaningful benefits for that condition in
+      that classification, as compared to the benefits provided for M/S conditions.
+    tags: [nqtl, meaningful_benefits]
+  - id: network_composition_nqtl
+    citation: "45 CFR § 146.137(c)(4)(i)"
+    summary: >
+      Network composition (including provider admission, reimbursement, and
+      adequacy) is subject to NQTL comparative analysis; relevant data include
+      out-of-network utilization and reimbursement benchmarks.
+    tags: [nqtl, network_composition, reimbursement]

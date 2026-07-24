@@ -1,0 +1,53 @@
+id: "federal:statute"
+title: "MHPAEA statute, as amended by CAA 2021 § 203"
+authority_type: statute
+citation: "29 U.S.C. § 1185a; 42 U.S.C. § 300gg-26; 26 U.S.C. § 9812; CAA 2021, Pub. L. 116-260, Div. BB, Title II, § 203"
+enforcement_status: enforced
+effective_date: "2021-02-10" # CAA 2021 comparative-analysis requirement applied since this date
+sunset_date: null
+applies_to: both
+jurisdiction: federal
+note: >
+  The statutory comparative-analysis requirement added by CAA 2021 § 203 is
+  self-implementing and has applied since February 10, 2021. It is in force and
+  enforced regardless of the posture of any implementing regulation. An analysis
+  that does not demonstrate parity "as written AND in operation" does not satisfy
+  42 U.S.C. § 300gg-26(a)(8)(A)(iv).
+provisions:
+  - id: parity_financial_requirements
+    citation: "29 U.S.C. § 1185a(a)(3)(A)(i)"
+    summary: >
+      Financial requirements applicable to MH/SUD benefits may be no more
+      restrictive than the predominant financial requirements applied to
+      substantially all M/S benefits in the classification, and there may be no
+      separate cost-sharing requirements applicable only to MH/SUD benefits.
+    tags: [qtl, financial_requirement, substantially_all, predominant]
+  - id: parity_treatment_limitations
+    citation: "29 U.S.C. § 1185a(a)(3)(A)(ii)"
+    summary: >
+      Treatment limitations applicable to MH/SUD benefits may be no more
+      restrictive than the predominant treatment limitations applied to
+      substantially all M/S benefits, and there may be no separate treatment
+      limitations applicable only to MH/SUD benefits.
+    tags: [qtl, treatment_limitation, nqtl]
+  - id: comparative_analysis_requirement
+    citation: "42 U.S.C. § 300gg-26(a)(8); 29 U.S.C. § 1185a(a)(8)"
+    summary: >
+      A group health plan that imposes NQTLs on MH/SUD benefits must perform and
+      document a comparative analysis of the design and application of each NQTL,
+      demonstrating comparability and no-more-stringent application both as
+      written and in operation, and make it available to the Departments on request.
+    tags: [nqtl, comparative_analysis, six_step, documentation]
+  - id: comparative_analysis_as_written_and_in_operation
+    citation: "42 U.S.C. § 300gg-26(a)(8)(A)(iv)"
+    summary: >
+      The comparative analysis must demonstrate compliance both "as written" and
+      "in operation." An as-written-only analysis is not a compliant comparative
+      analysis on its face.
+    tags: [nqtl, scope, as_written, in_operation]
+  - id: aggregate_lifetime_annual_dollar_limits
+    citation: "29 U.S.C. § 1185a(a)(1)-(2)"
+    summary: >
+      A plan may not impose aggregate lifetime or annual dollar limits on MH/SUD
+      benefits that are lower than the limits applied to M/S benefits.
+    tags: [qtl, dollar_limits, facial]
