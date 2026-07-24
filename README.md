@@ -100,19 +100,50 @@ test/                unit + golden-fixture + adversarial tests
 
 ```bash
 npm install
-npm test                       # run the full test suite
+npm test                       # run the full test suite (175 tests)
 npm run typecheck              # tsc --noEmit
 
-# Run an analysis
+# End-to-end demo (synthetic, de-identified) — writes DRAFT reports + audit log
+npm run parity -- analyze --demo --output ./output
+
+# Run an analysis from a structured input file
 npm run parity -- analyze \
   --plan-year 2025 \
   --scope both \
   --rulesets federal:statute,federal:2013,guidance:* \
   --advisory federal:2024 \
-  --jurisdiction ct \
-  --input ./path/to/plan-inputs \
+  --jurisdiction CT \
+  --nqtl-set core \
+  --input ./analysis-input.json \
   --output ./output
+
+# Inspect loaded rulesets and their enforcement status
+npm run parity -- rulesets
+
+# List the case-law verification queue (all rules ship INACTIVE)
+npm run parity -- verify-caselaw
 ```
+
+The `analyze` command writes `comparative-analysis.draft.md`,
+`self-compliance-tool.draft.md`, `audit-log.jsonl`, and `summary.json`. Reports
+are **DRAFT** until run through the attorney review gate (`AttorneyReviewGate`:
+submit → dispose each conclusion → approve with identity+bar+content-hash →
+finalize → export FINAL). The CLI emits DRAFT only.
+
+### Test suite (regression gates)
+
+- **QTL golden fixtures** — hand-computed, incl. exact-⅔ boundary,
+  no-single-level-over-½ combination, and zero-M/S-benefits cases.
+- **PHI detector** — seeded PHI of every type asserts rejection; adversarial
+  clean data asserts no false positives.
+- **Warning-sign scanner** — recall on a planted corpus + precision on
+  compliant look-alikes.
+- **Statistics** — z-test, Fisher, and Benjamini–Hochberg validated against
+  known values; n<30 short-circuit.
+- **Reproducibility** — identical inputs + clock ⇒ identical report content hash
+  and identical audit head hash.
+- **Attorney gate** — no FINAL export without a recorded approval; post-approval
+  mutation invalidates approval.
 
 ## Non-goals (v1)
 

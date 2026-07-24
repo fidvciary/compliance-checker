@@ -81,12 +81,18 @@ const DRAFT_BANNER =
   '> **DRAFT — PENDING ATTORNEY REVIEW. NOT LEGAL ADVICE.** This proposed conclusion was AI-drafted and is ' +
   'structurally excluded from any FINAL artifact until a licensed attorney reviews and approves it.';
 
-/** The deterministic body used for hashing + reproducibility (excludes volatile metadata). */
+/**
+ * The deterministic body used for hashing + reproducibility. Excludes volatile
+ * metadata (createdAt) AND approval metadata that the attorney gate mutates
+ * (report/cover status and attorneyOfRecord) — otherwise the approval hash would
+ * change as a side effect of approval and could never be finalized.
+ */
 export function deterministicBody(report: ReportRecord): unknown {
+  const { attorneyOfRecord: _a, status: _s, ...coverContent } = report.cover;
   return {
     id: report.id,
     type: report.type,
-    cover: { ...report.cover, attorneyOfRecord: report.cover.attorneyOfRecord?.approvedContentHash ?? null },
+    cover: coverContent,
     sections: report.sections,
     appendices: report.appendices,
     findings: report.findings.map((f) => ({
