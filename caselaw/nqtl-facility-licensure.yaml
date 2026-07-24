@@ -1,0 +1,27 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: nqtl.facility_licensure
+authority_type: enforcement_action
+case_name: DOL MHPAEA Report to Congress corrective actions (facility-licensure)
+citation: >-
+  DOL/HHS/Treasury MHPAEA Report to Congress corrective actions. VERIFY specific corrective action
+  before activation.
+jurisdiction: federal (DOL)
+precedential_weight: regulator_finding
+theory: Requiring facility licensure categories for MH/SUD that no facility in the state can obtain.
+scope: as_written
+detection_mode: all
+detection:
+  - target: facility_licensure
+    test: facility_licensure_unobtainable
+finding_template: >-
+  The plan appears to require an MH/SUD facility-licensure category that no facility in the state
+  can obtain, effectively denying access. DOL corrective actions have targeted this pattern.
+  Indicator requiring review.
+remediation_prompt: >-
+  Align facility-licensure requirements with categories actually available in the applicable
+  state(s).
+verified_by: null
+verified_date: null
+active: false

@@ -1,0 +1,44 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: wit_ubh.gasc_deviation
+authority_type: case_law
+case_name: Wit v. United Behavioral Health
+citation: >-
+  317 F. Supp. 3d 1106 (N.D. Cal. 2019) (findings of fact and conclusions of law); rev'd in part and
+  remanded sub nom. Wit v. United Behavioral Health, 79 F.4th 1068 (9th Cir. 2023); subsequent
+  district court proceedings on remand. VERIFY reporter volume, pinpoint holdings, and current
+  injunction status before activation.
+jurisdiction: 9th Cir. / N.D. Cal.
+precedential_weight: persuasive_district
+theory: >-
+  Internal level-of-care and medical-necessity coverage criteria that deviate from generally
+  accepted standards of care (GASC) — in particular, criteria oriented to acute stabilization rather
+  than to underlying chronic conditions and comorbidities, and criteria biased toward the lowest
+  level of care — support fiduciary-breach and arbitrary-and-capricious findings.
+scope: as_written
+detection_mode: any
+detection:
+  - target: mhsud_medical_necessity_criteria
+    test: criteria_source_is_proprietary AND NOT aligns_with(ASAM | LOCUS | CALOCUS | AACAP)
+  - target: mhsud_medical_necessity_criteria
+    test: contains_acute_stabilization_framing AND NOT contains_chronic_condition_framing
+  - target: mhsud_medical_necessity_criteria
+    test: contains_lowest_effective_level_of_care_default
+finding_template: >-
+  The plan's MH/SUD medical-necessity criteria appear to deviate from generally accepted standards
+  of care (proprietary criteria not aligned with ASAM/LOCUS/CALOCUS/AACAP, acute-stabilization
+  framing applied to chronic conditions, or a lowest-level-of-care default). Under the Wit v. UBH
+  analysis this pattern has supported fiduciary-breach and arbitrary-and-capricious findings. This
+  is an indicator requiring review of how the criteria were developed and applied.
+remediation_prompt: >-
+  Adopt criteria aligned with generally accepted standards of care (e.g., ASAM for SUD,
+  LOCUS/CALOCUS/AACAP for MH), remove acute-stabilization bias for chronic conditions, and document
+  the clinical basis for any deviation.
+note: >-
+  Wit's procedural history is complex (9th Cir. reversed in part on class/remedy grounds). VERIFY
+  holding scope and current status before relying on it. Persuasive, not binding, outside the 9th
+  Circuit.
+verified_by: null
+verified_date: null
+active: false

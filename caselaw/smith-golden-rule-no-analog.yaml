@@ -1,0 +1,28 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: smith_golden_rule.no_analog_required
+authority_type: case_law
+case_name: Smith v. Golden Rule Insurance Co.
+citation: Smith v. Golden Rule Ins. Co. (11th Cir. 2021). VERIFY citation, year, and holding.
+jurisdiction: 11th Cir.
+precedential_weight: persuasive_circuit
+theory: >-
+  PLEADING / ANALYSIS METHODOLOGY (not a violation detector): a facial parity theory does not
+  require identification of an exactly analogous M/S benefit. Use to WIDEN the comparator search,
+  not to emit a violation.
+scope: as_written
+detection_mode: all
+detection: []
+finding_template: >-
+  N/A — comparator-methodology reference. Widen the M/S comparator search; do not require an exact
+  analog.
+remediation_prompt: >-
+  When evaluating other rules, do not dismiss a MH/SUD limitation merely because no identical M/S
+  benefit exists; compare by function and level of care.
+note: >-
+  Reference-only rule. It shapes how other rules search for comparators and never produces a
+  standalone finding.
+verified_by: null
+verified_date: null
+active: false

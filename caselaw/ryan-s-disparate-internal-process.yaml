@@ -1,0 +1,30 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: ryan_s.disparate_internal_process
+authority_type: case_law
+case_name: Ryan S. v. UnitedHealth Group
+citation: 98 F.4th 965 (9th Cir. 2024). VERIFY reporter volume, year, and holding before activation.
+jurisdiction: 9th Cir.
+precedential_weight: binding_circuit
+theory: >-
+  A distinct internal review process (e.g., algorithmic flagging) applied to MH/SUD claims but not
+  to M/S claims within the same classification. The court held a plaintiff need not plead a
+  categorical exclusion or identify precisely analogous M/S claims — the existence of a more
+  stringent MH/SUD-only process suffices to state a claim.
+scope: in_operation
+detection_mode: all
+detection:
+  - target: internal_review_process
+    test: distinct_internal_process_mhsud_only
+finding_template: >-
+  The plan appears to apply a distinct internal review process to MH/SUD claims that is not applied
+  to comparable M/S claims. Under Ryan S. v. UnitedHealth Group this pattern can state a parity
+  claim without a categorical exclusion. Indicator requiring process review.
+remediation_prompt: >-
+  Document the internal review process for M/S and MH/SUD side by side; eliminate MH/SUD-only
+  heightened review or justify comparability with evidence.
+note: Binding in the 9th Circuit; persuasive elsewhere. VERIFY citation.
+verified_by: null
+verified_date: null
+active: false

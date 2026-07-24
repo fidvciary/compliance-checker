@@ -1,0 +1,25 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: aba_exclusion
+authority_type: case_law
+case_name: N.R. v. Raytheon Co.
+citation: >-
+  N.R. v. Raytheon Co., 24 F.4th 740 (1st Cir. 2022) (and progeny). VERIFY reporter volume and
+  holding.
+jurisdiction: 1st Cir.
+precedential_weight: binding_circuit
+theory: Exclusion or limitation of applied behavior analysis (ABA) for autism spectrum disorder.
+scope: as_written
+detection_mode: all
+detection:
+  - target: aba_benefit
+    test: aba_exclusion_present
+finding_template: >-
+  The plan appears to exclude or limit applied behavior analysis (ABA) for autism spectrum disorder.
+  This theory has been litigated (N.R. v. Raytheon and progeny). Indicator requiring review.
+remediation_prompt: Remove ABA exclusions/limits for ASD or document a comparable M/S limitation.
+note: Binding in the 1st Circuit; persuasive elsewhere.
+verified_by: null
+verified_date: null
+active: false

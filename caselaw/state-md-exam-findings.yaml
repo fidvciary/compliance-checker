@@ -1,0 +1,23 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: state.md_exam_findings
+authority_type: regulator_finding
+case_name: Maryland market conduct examination reports
+citation: Maryland Insurance Administration market conduct examination reports. VERIFY specific reports.
+jurisdiction: MD
+precedential_weight: regulator_finding
+theory: >-
+  REFERENCE (not a violation detector): use MD exam reports as compliant-analysis exemplars and as a
+  source of state-level detection patterns.
+scope: both
+detection_mode: all
+detection: []
+finding_template: N/A — reference exemplar. MD market conduct exam reports supply exemplars and detection patterns.
+remediation_prompt: Use MD exam exemplars to benchmark the sufficiency of the comparative analysis.
+note: >-
+  Reference-only rule. Fully-insured context; preemption limits direct application to self-funded
+  ERISA plans.
+verified_by: null
+verified_date: null
+active: false

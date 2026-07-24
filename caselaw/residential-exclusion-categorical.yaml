@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: residential_exclusion.categorical
+authority_type: case_law
+case_name: Bushell v. UnitedHealth Group; Joseph F. v. Sinclair Services Co.
+citation: >-
+  Bushell v. UnitedHealth Grp., No. 17-cv-2021 (S.D.N.Y. 2018); Joseph F. v. Sinclair Servs. Co.,
+  158 F. Supp. 3d 1239 (D. Utah 2016). VERIFY both.
+jurisdiction: S.D.N.Y. / D. Utah
+precedential_weight: persuasive_district
+theory: >-
+  Categorical exclusion or day-limit on residential MH/SUD treatment without a comparable M/S
+  sub-acute (e.g., SNF/rehab) restriction.
+scope: as_written
+detection_mode: any
+detection:
+  - target: residential_benefit
+    test: categorical_residential_exclusion OR residential_day_limit_present
+finding_template: >-
+  The plan appears to categorically exclude or day-limit residential MH/SUD treatment without a
+  comparable M/S sub-acute restriction. Courts (Bushell; Joseph F.) have credited this theory.
+  Indicator requiring review of the comparable M/S restriction.
+remediation_prompt: >-
+  Remove categorical residential exclusions/day-limits or document a comparable M/S sub-acute
+  restriction (SNF/rehab).
+verified_by: null
+verified_date: null
+active: false

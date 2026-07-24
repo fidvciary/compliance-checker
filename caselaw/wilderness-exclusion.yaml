@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: wilderness_exclusion
+authority_type: case_law
+case_name: Vorpahl v. Harvard Pilgrim; Christine S. v. BCBS of New Mexico
+citation: >-
+  Vorpahl v. Harvard Pilgrim Health Care, No. 17-cv-10844 (D. Mass. 2018); Christine S. v. Blue
+  Cross Blue Shield of N.M. (D. Utah 2019). VERIFY both.
+jurisdiction: D. Mass. / D. Utah
+precedential_weight: persuasive_district
+theory: >-
+  Blanket exclusion of wilderness/outdoor behavioral health programs; the theory turns on whether
+  comparable M/S sub-acute settings are excluded.
+scope: as_written
+detection_mode: all
+detection:
+  - target: wilderness_program_benefit
+    test: wilderness_exclusion_present
+finding_template: >-
+  The plan appears to exclude wilderness/outdoor behavioral health programs. Whether this is a
+  parity problem turns on whether comparable M/S sub-acute settings are also excluded. Indicator
+  requiring comparator review.
+remediation_prompt: >-
+  Assess whether comparable M/S sub-acute settings are excluded; if not, the wilderness exclusion
+  warrants revision or documented justification.
+verified_by: null
+verified_date: null
+active: false

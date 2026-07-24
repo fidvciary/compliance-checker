@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: state.ct_reimbursement_methodology
+authority_type: regulator_finding
+case_name: 2026 Connecticut Mental Health Parity Report
+citation: >-
+  2026 CT Mental Health Parity Report (findings against all five major CT carriers). VERIFY report
+  title/date.
+jurisdiction: CT
+precedential_weight: regulator_finding
+theory: Non-comparative reimbursement rate methodology for MH/SUD providers.
+scope: in_operation
+detection_mode: all
+detection:
+  - target: reimbursement_methodology
+    test: reimbursement_methodology_noncomparable
+finding_template: >-
+  The plan/administrator appears to use a non-comparative reimbursement methodology for MH/SUD
+  providers, mirroring the 2026 CT Mental Health Parity Report findings. Indicator requiring review
+  of the rate methodology.
+remediation_prompt: Document a reimbursement methodology comparable across MH/SUD and M/S provider types.
+note: >-
+  IMPORTANT: the 2026 CT findings addressed FULLY-INSURED products. Application to ASO / self-funded
+  arrangements is an OPEN QUESTION and must be flagged as such rather than asserted. State authority
+  over self-funded ERISA plans is limited by preemption.
+verified_by: null
+verified_date: null
+active: false

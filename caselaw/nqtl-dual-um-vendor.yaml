@@ -1,0 +1,25 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: nqtl.dual_um_vendor
+authority_type: enforcement_action
+case_name: DOL Warning Signs Cat. I; recurring enforcement (dual UM vendor)
+citation: DOL Warning Signs, Category I; recurring across DOL enforcement.
+jurisdiction: federal (DOL)
+precedential_weight: regulator_finding
+theory: Separate UM vendor and separate criteria for MH/SUD.
+scope: both
+detection_mode: all
+detection:
+  - target: vendor_structure
+    test: dual_um_vendor
+finding_template: >-
+  A separate UM vendor and/or criteria set for MH/SUD is present. This is a named DOL warning sign
+  and recurring enforcement pattern. Indicator requiring comparative review of processes and
+  criteria.
+remediation_prompt: >-
+  Document comparability of the MH/SUD vendor's processes/criteria to the M/S vendor's, or
+  consolidate.
+verified_by: null
+verified_date: null
+active: false

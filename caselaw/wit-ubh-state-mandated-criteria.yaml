@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: wit_ubh.state_mandated_criteria
+authority_type: case_law
+case_name: Wit v. United Behavioral Health
+citation: >-
+  See Wit v. United Behavioral Health, 317 F. Supp. 3d 1106 (N.D. Cal. 2019); and state
+  criteria-mandate statutes (e.g., California requiring ASAM for SUD). VERIFY.
+jurisdiction: 9th Cir. / N.D. Cal.
+precedential_weight: persuasive_district
+theory: >-
+  Failure to apply state-mandated clinical criteria (e.g., ASAM for SUD level-of-care) where
+  required by applicable state law or generally accepted standards.
+scope: as_written
+detection_mode: all
+detection:
+  - target: mhsud_medical_necessity_criteria
+    test: state_mandates_criteria(ASAM) AND NOT applies_state_mandated_criteria
+finding_template: >-
+  The applicable jurisdiction mandates specific MH/SUD criteria (e.g., ASAM), but the plan's
+  criteria do not appear to apply them. This is an indicator requiring review.
+remediation_prompt: Apply the state-mandated criteria set for the relevant conditions and document adoption.
+note: >-
+  State-mandate applicability to self-funded ERISA plans is limited by preemption; confirm whether
+  the mandate reaches the plan or is invoked only as evidence of generally accepted standards.
+verified_by: null
+verified_date: null
+active: false

@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: dol_ubh_settlement.oon_rate_reduction
+authority_type: enforcement_action
+case_name: Walsh v. United Behavioral Health (DOL consent judgment)
+citation: >-
+  Consent judgment, E.D.N.Y. 2021 (DOL/NY AG settlement with UBH). VERIFY caption, docket, and terms
+  before activation.
+jurisdiction: E.D.N.Y.
+precedential_weight: settlement
+theory: >-
+  Applying a reduction factor to out-of-network reimbursement rates for MH/SUD services that is not
+  applied to M/S services (and the related ALERT algorithm theory).
+scope: in_operation
+detection_mode: all
+detection:
+  - target: oon_reimbursement_methodology
+    test: oon_rate_reduction_mhsud_only
+finding_template: >-
+  The plan/administrator appears to apply an out-of-network reimbursement reduction factor to MH/SUD
+  services not applied to M/S. This mirrors the theory resolved in the Walsh v. UBH consent
+  judgment. Indicator requiring review of the OON rate methodology.
+remediation_prompt: >-
+  Remove any MH/SUD-specific OON reduction factor or document a comparable factor applied to M/S;
+  reconcile the UCR methodology across benefit types.
+verified_by: null
+verified_date: null
+active: false

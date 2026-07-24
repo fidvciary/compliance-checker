@@ -1,0 +1,22 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: nqtl.geographic_restriction
+authority_type: enforcement_action
+case_name: DOL Warning Signs Cat. V (geographic)
+citation: DOL Warning Signs, Category V.
+jurisdiction: federal (DOL)
+precedential_weight: regulator_finding
+theory: Restricting MH/SUD care to in-state or in-region facilities without an M/S analog.
+scope: as_written
+detection_mode: all
+detection:
+  - target: geographic_restriction
+    test: geographic_restriction_present
+finding_template: >-
+  The plan appears to restrict MH/SUD care to in-state/in-region facilities without a comparable M/S
+  restriction. Indicator requiring review.
+remediation_prompt: Remove MH/SUD-specific geographic restrictions or document a comparable M/S restriction.
+verified_by: null
+verified_date: null
+active: false

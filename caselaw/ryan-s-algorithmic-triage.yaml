@@ -1,0 +1,29 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: ryan_s.algorithmic_triage
+authority_type: case_law
+case_name: Ryan S. v. UnitedHealth Group (incorporating CA DMHC 2018 ALERT finding)
+citation: >-
+  98 F.4th 965 (9th Cir. 2024); California DMHC 2018 finding regarding UnitedHealthcare's ALERT
+  program. VERIFY both.
+jurisdiction: 9th Cir. / CA DMHC
+precedential_weight: binding_circuit
+theory: >-
+  Automated outlier / utilization-triage systems that route MH/SUD claims to heightened review not
+  applied to M/S.
+scope: in_operation
+detection_mode: all
+detection:
+  - target: internal_review_process
+    test: algorithmic_triage_present
+finding_template: >-
+  An automated triage/outlier system appears to route MH/SUD claims to heightened review. Under Ryan
+  S. and the CA DMHC ALERT finding this is an indicator requiring review of the algorithm's design,
+  inputs, and comparability to M/S handling.
+remediation_prompt: >-
+  Disclose and document any algorithmic triage; demonstrate that MH/SUD claims are not subjected to
+  more stringent automated review than comparable M/S claims.
+verified_by: null
+verified_date: null
+active: false

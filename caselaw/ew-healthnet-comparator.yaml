@@ -1,0 +1,25 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: ew_healthnet.plan_term_comparator
+authority_type: case_law
+case_name: E.W. v. Health Net Life Insurance Co.
+citation: E.W. v. Health Net Life Ins. Co. (10th Cir.). VERIFY citation, year, and holding.
+jurisdiction: 10th Cir.
+precedential_weight: persuasive_circuit
+theory: >-
+  COMPARATOR METHODOLOGY (not a violation detector): for residential-treatment exclusions, identify
+  the M/S analog by level-of-care intensity, not by label.
+scope: as_written
+detection_mode: all
+detection: []
+finding_template: >-
+  N/A — comparator-methodology reference. Match residential MH/SUD to its M/S analog by
+  level-of-care intensity (e.g., SNF/inpatient rehab), not by label.
+remediation_prompt: Use level-of-care intensity to select the M/S comparator for intermediate MH/SUD services.
+note: >-
+  Reference-only rule; informs the intermediate-care analog mapping and other rules' comparator
+  selection.
+verified_by: null
+verified_date: null
+active: false

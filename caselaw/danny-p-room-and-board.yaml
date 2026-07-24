@@ -1,0 +1,28 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: danny_p.room_and_board
+authority_type: case_law
+case_name: Danny P. v. Catholic Health Initiatives
+citation: 891 F.3d 1155 (9th Cir. 2018). VERIFY reporter volume and holding.
+jurisdiction: 9th Cir.
+precedential_weight: binding_circuit
+theory: >-
+  Excluding room and board at residential treatment facilities where room and board is covered at
+  skilled nursing facilities.
+scope: as_written
+detection_mode: all
+detection:
+  - target: residential_room_and_board
+    test: excludes_room_and_board_residential AND covers_room_and_board_snf
+finding_template: >-
+  The plan appears to exclude room and board at residential treatment facilities while covering room
+  and board at skilled nursing facilities. Under Danny P. v. Catholic Health Initiatives this
+  asymmetry supports a parity claim. Indicator requiring review.
+remediation_prompt: >-
+  Cover residential-treatment room and board comparably to SNF room and board, or document a
+  comparable M/S restriction.
+note: Binding in the 9th Circuit; persuasive elsewhere.
+verified_by: null
+verified_date: null
+active: false

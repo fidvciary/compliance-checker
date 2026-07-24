@@ -1,0 +1,28 @@
+# Case-law / enforcement rule — SHIPS INACTIVE.
+# Do not set active:true until an attorney has confirmed the citation, holding,
+# procedural posture, and current validity, and populated verified_by + verified_date.
+id: nqtl.licensure_restriction
+authority_type: case_law
+case_name: Provider-licensure restriction line of cases; DOL Warning Signs Cat. V
+citation: >-
+  Multiple district courts; DOL Warning Signs, Category V. VERIFY representative cases before
+  activation.
+jurisdiction: multiple districts
+precedential_weight: persuasive_district
+theory: >-
+  Excluding licensed MH professionals (LMFT, LPC, LCSW) or imposing supervision requirements not
+  imposed on comparable M/S providers.
+scope: as_written
+detection_mode: all
+detection:
+  - target: provider_licensure
+    test: excludes_licensed_professionals(LMFT | LPC | LCSW)
+finding_template: >-
+  The plan appears to exclude licensed MH professionals (LMFT/LPC/LCSW) or impose supervision
+  requirements not imposed on comparable M/S providers. Indicator requiring review.
+remediation_prompt: >-
+  Cover independently licensed MH professionals comparably to M/S providers of similar licensure
+  level.
+verified_by: null
+verified_date: null
+active: false
