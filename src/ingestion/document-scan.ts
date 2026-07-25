@@ -3,6 +3,7 @@ import { readPlanDocument } from './document-reader.js';
 import { chunkDocument } from './document-chunker.js';
 import { scanPassages, type WarningSignHit, type CandidatePassage } from '../analysis/warning-sign-scanner.js';
 import { scanLitigationLanguage, type LitigationLanguageObservation } from '../analysis/litigation-language.js';
+import { extractCostShares, compareCostShareLevels, type CostShareLevelFinding } from './schedule-of-benefits.js';
 
 /**
  * End-to-end plan-document screen: read → chunk → run the deterministic
@@ -23,6 +24,7 @@ export interface DocumentScanResult {
   passageCount: number;
   warningSigns: Array<WarningSignHit & { occurrences: number }>;
   litigation: Array<LitigationLanguageObservation & { occurrences: number }>;
+  costShareLevels: CostShareLevelFinding[];
   phiWarnings: string[];
 }
 
@@ -54,6 +56,9 @@ export function scanPlanDocumentText(doc: PlanDocument, documentId?: string): Do
     else litMap.set(key, { ...obs, occurrences: 1 });
   }
 
+  // Schedule-of-benefits cost-share level comparison (facial).
+  const costShareLevels = compareCostShareLevels(extractCostShares(passages));
+
   // Light PHI check — plan documents should be plan-level, not member data.
   const phiWarnings: string[] = [];
   if (SSN_RE.test(doc.text)) {
@@ -67,8 +72,19 @@ export function scanPlanDocumentText(doc: PlanDocument, documentId?: string): Do
     passageCount: passages.length,
     warningSigns: [...wsMap.values()],
     litigation: [...litMap.values()],
+    costShareLevels,
     phiWarnings,
   };
+}
+
+/** Read + chunk file(s) into all candidate passages (for cost-share extraction in a full run). */
+export async function extractAllChunks(filePaths: string[]): Promise<CandidatePassage[]> {
+  const out: CandidatePassage[] = [];
+  for (const path of filePaths) {
+    const doc = await readPlanDocument(path);
+    out.push(...chunkDocument(doc, { documentId: path }));
+  }
+  return out;
 }
 
 /** Read a file from disk and scan it. */
@@ -145,6 +161,21 @@ export function describeDocumentScan(result: DocumentScanResult): string {
     L.push('');
   }
 
+  L.push(`## Cost-share level comparison — Schedule of Benefits (${result.costShareLevels.length})`);
+  L.push('');
+  if (result.costShareLevels.length === 0) {
+    L.push('_No MH/SUD-more-restrictive cost-share levels were extracted. (If the numeric copays/coinsurance live in a separate Summary of Benefits, provide it — this SPD may describe structure without the numbers.)_');
+  } else {
+    L.push('Facial comparison of stated cost shares (the dollar-weighted substantially-all/predominant test additionally needs claims data):');
+    L.push('');
+    for (const c of result.costShareLevels) {
+      L.push(`- **${c.classification} — ${c.frType.replace('_', ' ')}**: MH/SUD ${fmtLevel(c.frType, c.mhsudLevel)} vs M/S ${fmtLevel(c.frType, c.msLevel)} (more restrictive for MH/SUD)`);
+      L.push(`  - MH/SUD line: "${c.mhsudServiceText}"${c.mhsudAnchor.page ? ` (p.${c.mhsudAnchor.page})` : ''}`);
+      L.push(`  - M/S line: "${c.msServiceText}"${c.msAnchor.page ? ` (p.${c.msAnchor.page})` : ''}`);
+    }
+  }
+  L.push('');
+
   L.push('## Recommended next steps');
   L.push('');
   L.push('1. Provide the **schedule of benefits** (copays, coinsurance, deductibles, day/visit limits by classification)');
@@ -159,4 +190,12 @@ function groupBy<T>(items: T[], key: (t: T) => string): Record<string, T[]> {
   const out: Record<string, T[]> = {};
   for (const it of items) (out[key(it)] ??= []).push(it);
   return out;
+}
+
+function fmtLevel(frType: string, level: number): string {
+  if (frType === 'coinsurance') return `${level}%`;
+  if (frType === 'copay' || frType === 'deductible') return `$${level}`;
+  if (frType === 'day_limit') return `${level} days`;
+  if (frType === 'visit_limit') return `${level} visits`;
+  return String(level);
 }

@@ -12,6 +12,7 @@ import type { AsWrittenFinding } from '../analysis/as-written-comparability.js';
 import type { CaselawHit } from '../analysis/caselaw/registry.js';
 import type { RateComparisonResult } from '../in-operation/metrics.js';
 import type { FactorAsymmetry } from '../nqtl/factors.js';
+import type { CostShareLevelFinding } from '../ingestion/schedule-of-benefits.js';
 import type { Classification } from '../classification/classifications.js';
 import type { AuditLog } from '../audit/audit-log.js';
 
@@ -201,6 +202,27 @@ export function fromFactorAsymmetry(ctx: SynthesisContext, nqtlId: string, class
     investigationQuestion: `${a.detail} A factor/evidentiary-source asymmetry is the single most frequently cited exam failure; confirm and reconcile.`,
     title: `Factor/source asymmetry — ${a.item} (${nqtlId}, ${classification})`,
     detail: a.detail,
+  });
+}
+
+// ---- Schedule-of-benefits cost-share level comparison ----
+export function fromCostShareLevel(ctx: SynthesisContext, c: CostShareLevelFinding): Finding {
+  return make(ctx, {
+    idPrefix: 'CS',
+    classificationId: c.classification,
+    scope: 'as_written',
+    track: 'regulatory',
+    authorityRefs: c.authorityRefs,
+    evidence: [
+      { kind: 'computation', description: `${c.frType} level comparison (${c.classification})`, values: { msLevel: c.msLevel, mhsudLevel: c.mhsudLevel, network: c.network } },
+      { kind: 'document', sourceDocumentId: c.mhsudAnchor.documentId, ...(c.mhsudAnchor.page !== undefined ? { page: c.mhsudAnchor.page } : {}), ...(c.mhsudAnchor.section !== undefined ? { section: c.mhsudAnchor.section } : {}), quotedText: c.mhsudServiceText },
+    ],
+    severity: 'significant_indicator',
+    confidence: 'high', // direct numeric comparison of stated cost shares
+    investigationQuestion:
+      `${c.detail} Confirm the M/S predominant level with claims dollars; if M/S cost sharing is uniform, a higher MH/SUD level exceeds the predominant and is a facial parity failure.`,
+    title: `Cost-share level — MH/SUD more restrictive ${c.frType} (${c.classification})`,
+    detail: c.detail,
   });
 }
 

@@ -18,13 +18,14 @@ import { evaluateQtl } from './qtl/qtl-engine.js';
 import { evaluateCumulative, evaluateDollarLimit, type CumulativeInput, type DollarLimitInput } from './qtl/cumulative.js';
 import type { QtlTestInput, QtlDetermination } from './qtl/types.js';
 import { scanPassages, detectDualAdministrator, type CandidatePassage, type VendorAssignment } from './analysis/warning-sign-scanner.js';
+import { extractCostShares, compareCostShareLevels } from './ingestion/schedule-of-benefits.js';
 import { compareAsWritten, type AsWrittenNqtlProfile, type CompareOptions } from './analysis/as-written-comparability.js';
 import { runComparisonFamily, type RateComparisonInput } from './in-operation/metrics.js';
 import { buildAvailabilityMatrix } from './ingestion/availability-matrix.js';
 import type { IngestResult } from './ingestion/ingest.js';
 import {
   fromQtl, fromCumulative, fromDollarLimit, fromWarningSign, fromDualAdministrator,
-  fromAsWritten, fromFactorAsymmetry, fromCaselaw, fromInOperation, resetFindingIds,
+  fromAsWritten, fromFactorAsymmetry, fromCaselaw, fromInOperation, fromCostShareLevel, resetFindingIds,
   type SynthesisContext,
 } from './findings/synthesis.js';
 import type { Finding } from './findings/finding.js';
@@ -59,6 +60,8 @@ export interface AnalysisInput {
   dollarLimitInputs?: Array<{ scope: 'aggregate_lifetime' | 'annual' } & DollarLimitInput>;
 
   warningSignPassages?: CandidatePassage[];
+  /** Passages (e.g., Schedule-of-Benefits lines) to extract cost-share levels from. */
+  costSharePassages?: CandidatePassage[];
   vendorMap?: VendorAssignment[];
   asWrittenComparisons?: Array<{ nqtlId: string; classification: Classification; ms: AsWrittenNqtlProfile; mhsud: AsWrittenNqtlProfile; opts?: CompareOptions }>;
   factorProfiles?: Array<{ nqtlId: string; classification: Classification; ms: SideProfile; mhsud: SideProfile }>;
@@ -149,6 +152,11 @@ export function runAnalysis(input: AnalysisInput, opts: { clock?: Clock } = {}):
   // Factor symmetry
   for (const p of input.factorProfiles ?? []) {
     for (const a of crossCheckFactorSymmetry(p.ms, p.mhsud)) findings.push(fromFactorAsymmetry(ctx, p.nqtlId, p.classification, a));
+  }
+  // Schedule-of-Benefits cost-share level comparison (facial)
+  if (input.costSharePassages?.length) {
+    const rows = extractCostShares(input.costSharePassages);
+    for (const c of compareCostShareLevels(rows)) findings.push(fromCostShareLevel(ctx, c));
   }
 
   // Case law (litigation track) — only active rules fire

@@ -8,7 +8,7 @@ import { CaselawRegistry } from './analysis/caselaw/registry.js';
 import { renderMarkdown } from './report/report-model.js';
 import { AttorneyReviewGate } from './attorney/review-gate.js';
 import { buildDemoInput } from './demo.js';
-import { scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages } from './ingestion/document-scan.js';
+import { scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages, extractAllChunks } from './ingestion/document-scan.js';
 
 /**
  * `parity` CLI. Subcommands:
@@ -85,12 +85,15 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
     return;
   }
 
-  // Extract warning-sign candidate passages from any plan documents and merge them.
+  // Extract candidate passages from any plan documents and merge them: warning
+  // signs from the fired passages, cost-share levels from all chunks.
   if (typeof flags.documents === 'string') {
     const paths = list(flags.documents);
     const extracted = await extractWarningSignPassages(paths);
+    const allChunks = await extractAllChunks(paths);
     input.warningSignPassages = [...(input.warningSignPassages ?? []), ...extracted];
-    console.log(`Extracted ${extracted.length} candidate passage(s) from ${paths.length} document(s).`);
+    input.costSharePassages = [...(input.costSharePassages ?? []), ...allChunks];
+    console.log(`Extracted ${extracted.length} warning-sign passage(s) and scanned ${allChunks.length} chunks for cost shares from ${paths.length} document(s).`);
   }
 
   // CLI flag overrides

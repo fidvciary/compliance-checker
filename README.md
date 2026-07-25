@@ -104,10 +104,12 @@ npm test                       # run the full test suite
 npm run typecheck              # tsc --noEmit
 
 # Upload a plan document (PDF or txt) and get a "what may not be compliant" screen
+# — DOL warning signs, litigation-theory language, AND a Schedule-of-Benefits
+#   cost-share comparison (a facially higher MH/SUD copay is caught here)
 npm run parity -- scan-document ./plan.pdf --output ./out
 
-# Start a full DRAFT report from plan document(s)
-npm run parity -- analyze --documents ./plan.pdf --jurisdiction PA --output ./out
+# Start a full DRAFT report from plan document(s), ranked by risk
+npm run parity -- analyze --documents ./plan.pdf --jurisdiction PA --sensitivity aggressive --output ./out
 
 # End-to-end demo (synthetic, de-identified) — writes DRAFT reports + audit log
 npm run parity -- analyze --demo --output ./output
@@ -135,6 +137,35 @@ The `analyze` command writes `comparative-analysis.draft.md`,
 are **DRAFT** until run through the attorney review gate (`AttorneyReviewGate`:
 submit → dispose each conclusion → approve with identity+bar+content-hash →
 finalize → export FINAL). The CLI emits DRAFT only.
+
+### Sensitivity & risk ranking
+
+The engine can run precision-first or recall-first, and always ranks output by risk:
+
+- `--sensitivity conservative | balanced (default) | aggressive`. **Aggressive**
+  is the "flag any possible parity gap" posture — it widens thresholds, reports
+  adverse near-significant statistics, and surfaces "applies to both — verify"
+  items instead of suppressing them. Every extra flag is **low confidence**.
+- Every finding gets a **risk score (0–100)** and **tier**
+  (critical/high/medium/low/informational) from severity × confidence ×
+  enforceability (advisory findings are halved) + disparity magnitude +
+  litigation venue. Reports and the CLI lead with the highest-risk items, so a
+  high-recall run stays usable: real problems sort to the top, noise to the
+  bottom. A risk score is **not** a determination — it's "most worth a human's
+  time." The non-negotiables are unchanged: nothing is promoted to a violation,
+  and the attorney gate still governs FINAL output.
+
+### From a document to the parity math
+
+`scan-document` and `analyze --documents` also run a **Schedule-of-Benefits
+cost-share comparison**: extracted copay/coinsurance/deductible/day-limit levels
+are paired MH/SUD vs M/S per classification, and a more-restrictive MH/SUD level
+is flagged (e.g., a $50 MH copay vs a $25 office-visit copay). This is a *facial*
+comparison; the dollar-weighted substantially-all/predominant test additionally
+needs claims data. Extraction is regex-first; an injectable **LLM extractor**
+(`src/llm/extraction.ts`, prompt-version pinned) handles prose the regex misses —
+but the LLM only *finds* facts; classification and every compliance decision stay
+in deterministic code.
 
 ### Test suite (regression gates)
 

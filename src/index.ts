@@ -40,6 +40,16 @@ export {
 } from './ingestion/document-scan.js';
 export type { DocumentScanResult } from './ingestion/document-scan.js';
 export { scanLitigationLanguage, LITIGATION_LANGUAGE_RULES } from './analysis/litigation-language.js';
+export { extractCostShares, compareCostShareLevels } from './ingestion/schedule-of-benefits.js';
+export type { CostShareRow, CostShareLevelFinding, FrType } from './ingestion/schedule-of-benefits.js';
+export { LlmExtractor, FakeLlmClient, EXTRACTION_PROMPTS } from './llm/extraction.js';
+export type { LlmClient } from './llm/extraction.js';
+
+// Risk scoring + sensitivity (recall-first posture)
+export { scoreFinding, assignAndRankRisk, riskTierCounts } from './findings/risk.js';
+export type { RiskAssessment, RiskTier } from './findings/finding.js';
+export { SENSITIVITY_PRESETS, resolveSensitivity } from './config/sensitivity.js';
+export type { SensitivityLevel, SensitivityConfig } from './config/sensitivity.js';
 
 // Classification
 export { classifyClaim, detectIntermediateMisclassification } from './classification/classifier.js';
