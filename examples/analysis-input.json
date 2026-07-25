@@ -1,0 +1,57 @@
+{
+  "analysisId": "ACME-2025",
+  "planYear": 2025,
+  "scope": "both",
+  "jurisdiction": "CT",
+  "rulesetSelectors": {
+    "active": ["federal:statute", "federal:2013", "guidance:*", "state:ct"],
+    "advisory": ["federal:2024"]
+  },
+  "nqtlSet": "core",
+  "samplePeriod": "2024-01-01 to 2024-12-31",
+  "projectionMethod": "prior-year paid claims, trended 6%",
+  "dataSources": [
+    { "artifact": "SPD + wrap document", "provenance": "employer upload 2026-07-01" },
+    { "artifact": "Claims extract (de-identified)", "provenance": "Aetna ASO, 2024 CY" }
+  ],
+
+  "qtlInputs": [
+    {
+      "classification": "outpatient_in_network",
+      "frQtlType": { "id": "copay", "kind": "financial_requirement", "label": "copayment", "restrictiveness": "higher_is_more_restrictive" },
+      "projectionMethod": "prior-year paid, trended 6%",
+      "msBenefits": [
+        { "id": "office_visit", "planPayments": 250000, "subjectToType": true, "level": 25 },
+        { "id": "physical_therapy", "planPayments": 750000, "subjectToType": false }
+      ],
+      "mhsudApplied": { "subjectToType": true, "level": 40 }
+    }
+  ],
+  "cumulativeInputs": [
+    { "classification": "outpatient_in_network", "separateMhsudDeductible": true, "separateMhsudOutOfPocketMax": false }
+  ],
+
+  "warningSignPassages": [
+    { "documentId": "SPD", "page": 14, "section": "Behavioral Health", "text": "Prior authorization is required for all outpatient mental health and substance use disorder services." },
+    { "documentId": "SPD", "page": 22, "section": "Exclusions", "text": "Wilderness therapy programs are excluded from coverage." }
+  ],
+  "vendorMap": [
+    { "function": "utilization_management", "msVendor": "Aetna", "mhsudVendor": "Optum Behavioral", "msCriteriaSet": "MCG", "mhsudCriteriaSet": "proprietary" }
+  ],
+  "asWrittenComparisons": [
+    {
+      "nqtlId": "prior_authorization",
+      "classification": "outpatient_in_network",
+      "ms": { "side": "MS", "scopePercent": 5, "criteriaSource": "nationally_recognized", "criteriaStandards": ["MCG"] },
+      "mhsud": { "side": "MHSUD", "scopePercent": 62, "criteriaSource": "proprietary", "criteriaStandards": [] }
+    }
+  ],
+
+  "rateComparisons": [
+    { "metricId": "denial_rate", "classification": "outpatient_in_network", "mhsud": { "events": 226, "n": 1240 }, "ms": { "events": 1153, "n": 18900 } }
+  ],
+  "reimbursementTable": [
+    { "code": "99213", "description": "Office visit, established", "specialtyGroup": "M/S comparison", "percentOfMedicare": 128, "locality": "CT" },
+    { "code": "90837", "description": "Psychotherapy, 60 min", "specialtyGroup": "MH/SUD", "percentOfMedicare": 84, "locality": "CT" }
+  ]
+}
