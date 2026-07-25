@@ -145,9 +145,11 @@ export function fromWarningSign(ctx: SynthesisContext, h: WarningSignHit): Findi
     authorityRefs: h.authorityRefs,
     evidence: [{ kind: 'document', sourceDocumentId: h.passage.documentId, ...(h.passage.page !== undefined ? { page: h.passage.page } : {}), ...(h.passage.section !== undefined ? { section: h.passage.section } : {}), quotedText: h.passage.text }],
     severity: 'potential_indicator',
-    confidence: 'high', // the rule match is deterministic; the plan language is quoted verbatim
-    investigationQuestion: `${h.rationale} Determine whether a comparable M/S provision exists and whether the factors and evidentiary standards are applied no more stringently.`,
-    title: `Warning sign ${h.category} — ${h.ruleName}`,
+    // A firm rule match on verbatim language is high confidence; a weak
+    // (aggressive-mode "applies to both — verify") hit is low confidence.
+    confidence: h.weak ? 'low' : 'high',
+    investigationQuestion: `${h.rationale}${h.note ? ' ' + h.note : ' Determine whether a comparable M/S provision exists and whether the factors and evidentiary standards are applied no more stringently.'}`,
+    title: `Warning sign ${h.category}${h.weak ? ' (verify)' : ''} — ${h.ruleName}`,
     detail: `Matched plan language: "${h.passage.text}" (${h.citation}).`,
   });
 }
@@ -238,6 +240,23 @@ export function fromInOperation(ctx: SynthesisContext, r: RateComparisonResult):
       investigationQuestion: r.investigationQuestion,
       title: `In-operation ${r.label} — insufficient data (${r.classification})`,
       detail: r.insufficientReason ?? 'Insufficient data.',
+    });
+  }
+  // Near-significant (aggressive sensitivity): emit as a LOW-confidence potential indicator.
+  if (!r.significant && r.nearSignificant) {
+    return make(ctx, {
+      idPrefix: 'OP',
+      classificationId: r.classification,
+      ...(r.subclassKey ? { subclassificationId: r.subclassKey } : {}),
+      scope: 'in_operation',
+      track: 'regulatory',
+      authorityRefs: r.authorityRefs,
+      evidence: [{ kind: 'statistical', metric: r.metricId, msValue: round(r.rateMs, 4), mhsudValue: round(r.rateMhsud, 4), ratio: Number.isFinite(r.ratio) ? round(r.ratio, 3) : r.ratio, diff: round(r.diff, 4), nMs: r.nMs, nMhsud: r.nMhsud, ...(r.pValue !== undefined ? { pValue: r.pValue } : {}), ...(r.pAdjusted !== undefined ? { pAdjusted: r.pAdjusted } : {}), ...(r.testUsed ? { testUsed: r.testUsed } : {}) }],
+      severity: 'potential_indicator',
+      confidence: 'low',
+      investigationQuestion: r.investigationQuestion,
+      title: `In-operation ${r.label} — near-significant (verify) — ${r.classification}`,
+      detail: r.investigationQuestion,
     });
   }
   // Not significant or not adverse or practically negligible → compliant/indicator.

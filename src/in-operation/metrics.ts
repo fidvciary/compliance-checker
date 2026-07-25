@@ -71,6 +71,8 @@ export interface RateComparisonResult {
   effectSize?: { h: number; magnitude: string };
   adverseToMhsud?: boolean;
   significant?: boolean;
+  /** Aggressive sensitivity: adverse and in the (alpha..nearAlpha] band — low confidence. */
+  nearSignificant?: boolean;
   practicallyNegligible?: boolean;
   investigationQuestion: string;
   insufficientReason?: string;
@@ -90,8 +92,15 @@ function fmtP(p: number): string {
   return p < 0.001 ? 'p<0.001' : `p=${p.toFixed(3)}`;
 }
 
+export interface ComparisonOptions {
+  /** Aggressive sensitivity: surface adverse near-significant results as low-confidence. */
+  reportNearSignificant?: boolean;
+  /** Upper p bound for "near-significant" (e.g., 0.10). */
+  nearSignificantAlpha?: number;
+}
+
 /** Run one comparison, applying the n>=30 gate and choosing the test. p-adjusted is filled by the family runner. */
-export function runRateComparison(input: RateComparisonInput): RateComparisonResult {
+export function runRateComparison(input: RateComparisonInput, opts: ComparisonOptions = {}): RateComparisonResult {
   const def = metricDef(input.metricId);
   const { mhsud, ms } = input;
   const base = {
@@ -139,6 +148,8 @@ export function runRateComparison(input: RateComparisonInput): RateComparisonRes
     effectSize: { h: round(eff.h, 3), magnitude: eff.magnitude },
     adverseToMhsud: adverse,
     significant: pValue < ALPHA,
+    nearSignificant:
+      !!opts.reportNearSignificant && adverse && pValue >= ALPHA && pValue < (opts.nearSignificantAlpha ?? 0.1),
     practicallyNegligible: eff.magnitude === 'negligible' && Math.abs(z.diff) < 0.02,
     investigationQuestion: '', // filled by family runner (needs adjusted p)
   };
@@ -148,8 +159,8 @@ export function runRateComparison(input: RateComparisonInput): RateComparisonRes
  * Run a family of comparisons and apply the Benjamini–Hochberg correction across
  * the TESTED members. Fills p-adjusted and the investigation-question framing.
  */
-export function runComparisonFamily(inputs: RateComparisonInput[], audit?: AuditLog): RateComparisonResult[] {
-  const results = inputs.map(runRateComparison);
+export function runComparisonFamily(inputs: RateComparisonInput[], audit?: AuditLog, opts: ComparisonOptions = {}): RateComparisonResult[] {
+  const results = inputs.map((i) => runRateComparison(i, opts));
   const tested = results.filter((r) => r.status === 'tested');
   const adjusted = benjaminiHochberg(tested.map((r) => r.pValue!));
   tested.forEach((r, i) => {
@@ -181,6 +192,9 @@ function buildInvestigationQuestion(r: RateComparisonResult): string {
   const head = `MH/SUD ${r.classification.replace(/_/g, ' ')} ${r.label.toLowerCase()} was ${fmtPct(r.rateMhsud)} versus ${fmtPct(r.rateMs)} for M/S (ratio ${ratioStr}, ${fmtP(r.pValue!)}, ${adjStr}, n=${r.nMhsud}/${r.nMs}; ${testName}; ${ci}; effect size h=${r.effectSize!.h} [${r.effectSize!.magnitude}]).`;
 
   if (!r.significant) {
+    if (r.nearSignificant) {
+      return `${head} Below the 95% significance threshold but NEAR-significant and adverse to MH/SUD; surfaced under high-sensitivity screening as a LOW-CONFIDENCE item to verify with more data. Not a warning sign on these data alone.`;
+    }
     return `${head} The difference is NOT statistically significant at the 95% level after correction; not a warning sign on these data.`;
   }
   if (r.practicallyNegligible) {

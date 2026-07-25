@@ -32,6 +32,8 @@ import { buildComparativeAnalysisReport } from './report/comparative-analysis.js
 import { buildSelfComplianceToolReport, type ReimbursementRow } from './report/self-compliance-tool.js';
 import type { EvaluationScope, ReportRecord } from './report/report-model.js';
 import type { MethodologyConfig } from './report/methodology.js';
+import { resolveSensitivity, type SensitivityLevel } from './config/sensitivity.js';
+import { assignAndRankRisk } from './findings/risk.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const RULESETS_DIR = join(here, '..', 'rulesets');
@@ -44,6 +46,8 @@ export interface AnalysisInput {
   jurisdiction: string;
   rulesetSelectors: { active: string[]; advisory: string[] };
   nqtlSet: NqtlSet;
+  /** Precision/recall dial. Default 'balanced'; 'aggressive' flags any possible gap and ranks by risk. */
+  sensitivity?: SensitivityLevel;
   classifications?: Classification[];
   samplePeriod?: string | null;
   projectionMethod?: string;
@@ -107,11 +111,12 @@ export function runAnalysis(input: AnalysisInput, opts: { clock?: Clock } = {}):
 
   const ctx: SynthesisContext = { analysisId: input.analysisId, registry, audit };
   const findings: Finding[] = [];
+  const sensitivity = resolveSensitivity(input.sensitivity);
 
   // QTL/FR
   const qtlDeterminations: QtlDetermination[] = [];
   for (const q of input.qtlInputs ?? []) {
-    const d = evaluateQtl(q);
+    const d = evaluateQtl({ ...q, epsilon: q.epsilon ?? sensitivity.qtlEpsilon });
     qtlDeterminations.push(d);
     audit.append('qtl.computed', 'engine', { classification: d.classification, frQtl: d.frQtlTypeId, verdict: d.compliance.verdict });
     const f = fromQtl(ctx, d);
@@ -127,14 +132,19 @@ export function runAnalysis(input: AnalysisInput, opts: { clock?: Clock } = {}):
 
   // As-written: warning signs + dual admin
   if (input.warningSignPassages?.length) {
-    for (const h of scanPassages(input.warningSignPassages, audit)) findings.push(fromWarningSign(ctx, h));
+    const scanOpts = {
+      requireCueForSectionContext: sensitivity.warningSignRequireCueForSection,
+      emitAppliesToBothAsVerify: sensitivity.emitAppliesToBothAsVerify,
+    };
+    for (const h of scanPassages(input.warningSignPassages, audit, scanOpts)) findings.push(fromWarningSign(ctx, h));
   }
   if (input.vendorMap?.length) {
     for (const d of detectDualAdministrator(input.vendorMap)) findings.push(fromDualAdministrator(ctx, d));
   }
-  // As-written comparability
+  // As-written comparability (sensitivity controls scope tolerance)
   for (const cmp of input.asWrittenComparisons ?? []) {
-    for (const a of compareAsWritten(cmp.nqtlId, cmp.classification, cmp.ms, cmp.mhsud, cmp.opts)) findings.push(fromAsWritten(ctx, a));
+    const opts = { scopePointTolerance: sensitivity.scopePointTolerance, scopeRatio: sensitivity.scopeRatio, ...cmp.opts };
+    for (const a of compareAsWritten(cmp.nqtlId, cmp.classification, cmp.ms, cmp.mhsud, opts)) findings.push(fromAsWritten(ctx, a));
   }
   // Factor symmetry
   for (const p of input.factorProfiles ?? []) {
@@ -146,13 +156,21 @@ export function runAnalysis(input: AnalysisInput, opts: { clock?: Clock } = {}):
     for (const h of caselaw.evaluate(input.planFacts, { venueState: input.jurisdiction, audit })) findings.push(fromCaselaw(ctx, h));
   }
 
-  // In-operation
+  // In-operation (sensitivity controls near-significant reporting)
   if (input.rateComparisons?.length) {
-    for (const r of runComparisonFamily(input.rateComparisons, audit)) {
+    const opts = { reportNearSignificant: sensitivity.reportNearSignificant, nearSignificantAlpha: sensitivity.nearSignificantAlpha };
+    for (const r of runComparisonFamily(input.rateComparisons, audit, opts)) {
       const f = fromInOperation(ctx, r);
       if (f) findings.push(f);
     }
   }
+
+  // Risk scoring + ranking: assign a risk score to every finding and order the
+  // canonical finding list highest-risk first so the top of the report is where
+  // to focus. High sensitivity surfaces more; risk ranking keeps it usable.
+  const ranked = assignAndRankRisk(findings);
+  findings.length = 0;
+  findings.push(...ranked);
 
   // Availability matrix
   const availability = buildAvailabilityMatrix(input.ingestedDatasets ?? []);

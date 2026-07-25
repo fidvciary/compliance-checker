@@ -16,7 +16,13 @@ import { getNqtl } from '../nqtl/nqtl-library.js';
 /**
  * Comparative-analysis report (six-step, WV/state-form layout), with two-track
  * exposure output (regulatory vs litigation) and advisory findings segregated.
+ * Findings are ordered by RISK (desc) so the top of each list is where to focus.
  */
+
+/** Order by risk score (desc), falling back to severity. */
+function byRisk(a: Finding, b: Finding): number {
+  return (b.risk?.score ?? 0) - (a.risk?.score ?? 0) || compareSeverity(a, b);
+}
 
 export interface ComparativeAnalysisInput {
   analysisId: string;
@@ -48,7 +54,7 @@ function findingsBlock(findings: Finding[], emptyText: string): string {
   if (findings.length === 0) return emptyText;
   return findings
     .slice()
-    .sort(compareSeverity)
+    .sort(byRisk)
     .map((f) => `- **[${f.severity}]** ${f.title} — refs: ${f.authorityRefs.join(', ')}`)
     .join('\n');
 }
@@ -90,7 +96,7 @@ export function buildComparativeAnalysisReport(input: ComparativeAnalysisInput):
         body:
           'These findings are keyed to statute, the 2013 final rule, the CAA 2021 comparative-analysis requirement, ' +
           'and DOL sub-regulatory guidance that remain in force and enforced.',
-        findingRefs: regulatory.slice().sort(compareSeverity).map((f) => f.id),
+        findingRefs: regulatory.slice().sort(byRisk).map((f) => f.id),
       },
     ],
   });
@@ -108,7 +114,7 @@ export function buildComparativeAnalysisReport(input: ComparativeAnalysisInput):
           'motions to dismiss or produced adverse judgments/settlements. For a mid-market self-funded plan the ' +
           'realistic enforcement trigger is participant litigation or an EBSA complaint, so this track is often the ' +
           'commercially relevant one. Only attorney-verified (active) rules appear here.',
-        findingRefs: litigation.slice().sort(compareSeverity).map((f) => f.id),
+        findingRefs: litigation.slice().sort(byRisk).map((f) => f.id),
       },
     ],
   });
@@ -126,7 +132,7 @@ export function buildComparativeAnalysisReport(input: ComparativeAnalysisInput):
             'These findings depend only on the 2024 final rule, which is under a federal non-enforcement policy ' +
             '(ERIC v. HHS). They are not required now but are prudent to prepare for. State obligations, where ' +
             'applicable, are unaffected by the federal non-enforcement posture.',
-          findingRefs: advisory.slice().sort(compareSeverity).map((f) => f.id),
+          findingRefs: advisory.slice().sort(byRisk).map((f) => f.id),
         },
       ],
     });

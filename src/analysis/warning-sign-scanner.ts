@@ -33,9 +33,28 @@ export interface WarningSignHit {
   citation: string;
   authorityRefs: string[];
   rationale: string;
+  /** Weak hit (aggressive sensitivity): low confidence, e.g. an "applies to both — verify" item. */
+  weak?: boolean;
+  note?: string;
 }
 
-function ruleFires(rule: WarningSignRule, passage: CandidatePassage): { fired: boolean; pattern?: string } {
+export interface ScanOptions {
+  /** When MH context is section-only, also require a requirement cue (precision). */
+  requireCueForSectionContext?: boolean;
+  /** Aggressive: emit "applies to both" passages as WEAK verify hits instead of suppressing. */
+  emitAppliesToBothAsVerify?: boolean;
+}
+
+const DEFAULT_SCAN_OPTS: Required<ScanOptions> = {
+  requireCueForSectionContext: true,
+  emitAppliesToBothAsVerify: false,
+};
+
+function ruleFires(
+  rule: WarningSignRule,
+  passage: CandidatePassage,
+  opts: Required<ScanOptions>,
+): { fired: boolean; pattern?: string; weak?: boolean; note?: string } {
   const text = passage.text;
   const matched = rule.patterns.find((p) => p.test(text));
   if (!matched) return { fired: false };
@@ -43,20 +62,30 @@ function ruleFires(rule: WarningSignRule, passage: CandidatePassage): { fired: b
   if (rule.mode === 'intrinsic') {
     return { fired: true, pattern: matched.source };
   }
-  // mhsud_scoped: must be MH/SUD-scoped and must NOT indicate parallel M/S
-  // application. MH/SUD context can come from the passage text OR the section
-  // heading it sits under. But when the MH/SUD context comes ONLY from the
-  // section (the sentence itself has no MH term), also require a real
-  // requirement/imposition cue — otherwise a purely DESCRIPTIVE sentence that
-  // merely sits in a MH/SUD-titled section (e.g., "the program consists of ...
-  // precertification ...") would false-fire. The "applies to both" guard is
-  // tested on the passage text only.
+  // mhsud_scoped: MH/SUD context can come from the passage text OR the section
+  // heading. When it comes ONLY from the section, precision modes also require a
+  // requirement/imposition cue so descriptive text does not false-fire.
   const mhInText = MHSUD_TERMS.test(text);
   const mhInSection = MHSUD_TERMS.test(passage.section ?? '');
   const appliesToBoth = APPLIES_TO_BOTH.test(text);
-  const mentionsMhsud = mhInText || (mhInSection && REQUIREMENT_CUE.test(text));
-  if (mentionsMhsud && !appliesToBoth) {
-    return { fired: true, pattern: matched.source };
+  const cueOk = !opts.requireCueForSectionContext || REQUIREMENT_CUE.test(text);
+  const mentionsMhsud = mhInText || (mhInSection && cueOk);
+  if (!mentionsMhsud) return { fired: false };
+
+  if (!appliesToBoth) return { fired: true, pattern: matched.source };
+
+  // Parallel M/S application is stated. Precision modes suppress; aggressive mode
+  // surfaces it as a WEAK "verify comparability" item (low confidence/low risk).
+  if (opts.emitAppliesToBothAsVerify) {
+    return {
+      fired: true,
+      pattern: matched.source,
+      weak: true,
+      note:
+        'The provision states it applies to both M/S and MH/SUD. That is compatible with parity ON ITS FACE, ' +
+        'but confirm the factors, evidentiary standards, and application are actually comparable and no more ' +
+        'stringent for MH/SUD in operation.',
+    };
   }
   return { fired: false };
 }
@@ -65,11 +94,12 @@ function ruleFires(rule: WarningSignRule, passage: CandidatePassage): { fired: b
 const REQUIREMENT_CUE =
   /\b(required|require|requires|must|shall|only|prior to|before|may not|will not|not covered|excluded|limited to|no more than|maximum of|need to obtain|obtain (a |an )?(pre-?cert|pre-?auth|authorization))\b/i;
 
-export function scanPassages(passages: CandidatePassage[], audit?: AuditLog): WarningSignHit[] {
+export function scanPassages(passages: CandidatePassage[], audit?: AuditLog, options?: ScanOptions): WarningSignHit[] {
+  const opts = { ...DEFAULT_SCAN_OPTS, ...(options ?? {}) };
   const hits: WarningSignHit[] = [];
   for (const passage of passages) {
     for (const rule of WARNING_SIGN_RULES) {
-      const { fired, pattern } = ruleFires(rule, passage);
+      const { fired, pattern, weak, note } = ruleFires(rule, passage, opts);
       if (fired) {
         const hit: WarningSignHit = {
           ruleId: rule.id,
@@ -81,6 +111,8 @@ export function scanPassages(passages: CandidatePassage[], audit?: AuditLog): Wa
           citation: rule.citation,
           authorityRefs: ['guidance:warning-signs'],
           rationale: rule.rationale,
+          ...(weak ? { weak: true } : {}),
+          ...(note ? { note } : {}),
         };
         hits.push(hit);
         audit?.append('warning_sign.matched', 'engine', {
@@ -89,6 +121,7 @@ export function scanPassages(passages: CandidatePassage[], audit?: AuditLog): Wa
           documentId: passage.documentId,
           page: passage.page,
           section: passage.section,
+          weak: weak ?? false,
         });
       }
     }

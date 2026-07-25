@@ -116,8 +116,10 @@ export function reportContentHash(report: ReportRecord): string {
 function renderFinding(f: Finding, isFinal: boolean): string {
   const lines: string[] = [];
   const advisoryTag = f.advisory ? ' `ADVISORY — NOT CURRENTLY FEDERALLY ENFORCED`' : '';
-  lines.push(`**[${f.severity.toUpperCase()}]${advisoryTag} ${f.title}** _(${f.scope} / ${f.track})_`);
+  const riskTag = f.risk ? ` \`RISK ${f.risk.tier.toUpperCase()} ${f.risk.score}\`` : '';
+  lines.push(`**[${f.severity.toUpperCase()}]${riskTag}${advisoryTag} ${f.title}** _(${f.scope} / ${f.track})_`);
   lines.push('');
+  if (f.risk) lines.push(`- Risk: ${f.risk.tier} (${f.risk.score}/100)`);
   lines.push(`- Authority: ${f.authorityRefs.join(', ')}`);
   lines.push(`- Confidence: ${f.confidence}`);
   lines.push(`- Investigation question: ${f.investigationQuestion}`);

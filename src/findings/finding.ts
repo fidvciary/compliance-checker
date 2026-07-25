@@ -91,6 +91,18 @@ export interface Finding {
   attorneyDisposition: AttorneyDisposition | null;
   /** 'advisory' when every authority_ref is an advisory ruleset (segregated in report). */
   advisory?: boolean;
+  /** Populated by the risk model (src/findings/risk.ts) for ranking. */
+  risk?: RiskAssessment;
+}
+
+export type RiskTier = 'critical' | 'high' | 'medium' | 'low' | 'informational';
+
+export interface RiskAssessment {
+  /** 0-100. Higher = more likely a real, currently-enforceable parity problem worth attention. */
+  score: number;
+  tier: RiskTier;
+  /** Human-readable factor breakdown for transparency. */
+  factors: Record<string, number>;
 }
 
 export class FindingIntegrityError extends Error {}

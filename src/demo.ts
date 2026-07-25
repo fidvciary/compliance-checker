@@ -45,6 +45,8 @@ export function buildDemoInput(): AnalysisInput {
       { documentId: 'SPD', page: 14, section: 'Behavioral Health', text: 'Prior authorization is required for all outpatient mental health and substance use disorder services.' },
       { documentId: 'SPD', page: 22, section: 'Exclusions', text: 'Wilderness therapy programs are excluded from coverage.' },
       { documentId: 'UM', page: 3, section: 'Concurrent Review', text: 'Concurrent review is conducted every 3 days for substance use disorder inpatient stays.' },
+      // Borderline: states parallel application — suppressed at balanced, surfaced as a low-risk "verify" item at aggressive.
+      { documentId: 'SPD', page: 40, section: 'Utilization Management', text: 'Precertification is required for all inpatient admissions, both medical/surgical and behavioral health, regardless of diagnosis.' },
     ],
     vendorMap: [{ function: 'utilization_management', msVendor: 'Aetna', mhsudVendor: 'Optum Behavioral', msCriteriaSet: 'MCG', mhsudCriteriaSet: 'proprietary' }],
 
@@ -73,6 +75,8 @@ export function buildDemoInput(): AnalysisInput {
     rateComparisons: [
       { metricId: 'denial_rate', classification: 'outpatient_in_network', mhsud: { events: 226, n: 1240 }, ms: { events: 1153, n: 18900 } },
       { metricId: 'denial_rate', classification: 'inpatient_out_of_network', mhsud: { events: 3, n: 12 }, ms: { events: 2, n: 40 } },
+      // Borderline: adverse but only near-significant (p~0.06) — surfaced (low confidence) only at aggressive.
+      { metricId: 'denial_rate', classification: 'inpatient_in_network', mhsud: { events: 18, n: 100 }, ms: { events: 9, n: 100 } },
     ],
     reimbursementTable: [
       { code: '99213', description: 'Office visit, established', specialtyGroup: 'M/S comparison', percentOfMedicare: 128, locality: 'CT' },

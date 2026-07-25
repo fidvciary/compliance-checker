@@ -8,7 +8,6 @@ import { CaselawRegistry } from './analysis/caselaw/registry.js';
 import { renderMarkdown } from './report/report-model.js';
 import { AttorneyReviewGate } from './attorney/review-gate.js';
 import { buildDemoInput } from './demo.js';
-import { compareSeverity } from './findings/finding.js';
 import { scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages } from './ingestion/document-scan.js';
 
 /**
@@ -99,6 +98,7 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
   if (typeof flags['plan-year'] === 'string') input.planYear = Number(flags['plan-year']);
   if (typeof flags.jurisdiction === 'string') input.jurisdiction = flags.jurisdiction;
   if (typeof flags['nqtl-set'] === 'string') input.nqtlSet = flags['nqtl-set'] as AnalysisInput['nqtlSet'];
+  if (typeof flags.sensitivity === 'string') input.sensitivity = flags.sensitivity as AnalysisInput['sensitivity'];
   if (flags.rulesets) input.rulesetSelectors = { active: list(flags.rulesets), advisory: list(flags.advisory) };
 
   const outDir = typeof flags.output === 'string' ? flags.output : join(process.cwd(), 'output');
@@ -111,12 +111,15 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
   writeFileSync(join(outDir, 'self-compliance-tool.draft.md'), renderMarkdown(result.selfComplianceReport));
   writeFileSync(join(outDir, 'audit-log.jsonl'), result.audit.toJSONL());
 
+  const ranked = result.findings.slice().sort((a, b) => (b.risk?.score ?? 0) - (a.risk?.score ?? 0));
   const summary = {
     analysisId: input.analysisId,
     scope: input.scope,
+    sensitivity: input.sensitivity ?? 'balanced',
     rulesets: result.registry.coverSummary(),
     findingCount: result.findings.length,
     bySeverity: countBy(result.findings.map((f) => f.severity)),
+    byRiskTier: countBy(result.findings.map((f) => f.risk?.tier ?? 'unknown')),
     byTrack: countBy(result.findings.map((f) => f.track)),
     advisoryFindings: result.findings.filter((f) => f.advisory).length,
     auditHeadHash: result.audit.headHash(),
@@ -124,11 +127,12 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
   };
   writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2));
 
-  console.log(`Analysis ${input.analysisId} complete (scope: ${input.scope}).`);
-  console.log(`Findings: ${result.findings.length} (${JSON.stringify(summary.bySeverity)})`);
-  console.log('Top findings:');
-  for (const f of result.findings.slice().sort(compareSeverity).slice(0, 8)) {
-    console.log(`  [${f.severity}] (${f.track}${f.advisory ? ', advisory' : ''}) ${f.title}`);
+  console.log(`Analysis ${input.analysisId} complete (scope: ${input.scope}, sensitivity: ${summary.sensitivity}).`);
+  console.log(`Findings: ${result.findings.length} — by risk tier: ${JSON.stringify(summary.byRiskTier)}`);
+  console.log('Top findings (ranked by risk):');
+  for (const f of ranked.slice(0, 10)) {
+    const risk = f.risk ? `${f.risk.tier} ${f.risk.score}` : '—';
+    console.log(`  [risk ${risk.padEnd(12)}] [${f.severity}] (${f.track}${f.advisory ? ', advisory' : ''}) ${f.title}`);
   }
   console.log(`\nReports are DRAFT — NOT a completed comparative analysis until attorney-approved.`);
   console.log(`Wrote: comparative-analysis.draft.md, self-compliance-tool.draft.md, audit-log.jsonl, summary.json -> ${outDir}`);
