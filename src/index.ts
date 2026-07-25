@@ -31,6 +31,16 @@ export { mapColumns } from './ingestion/column-mapping.js';
 export { TPA_TEMPLATES, knownTpas } from './ingestion/tpa-templates.js';
 export { buildAvailabilityMatrix, ANALYSIS_FEATURES } from './ingestion/availability-matrix.js';
 
+// Plan-document reading + as-written screen (upload a PDF/txt -> what may not be compliant)
+export { readPlanDocument, planDocumentFromText } from './ingestion/document-reader.js';
+export type { PlanDocument } from './ingestion/document-reader.js';
+export { chunkDocument } from './ingestion/document-chunker.js';
+export {
+  scanPlanDocumentText, scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages,
+} from './ingestion/document-scan.js';
+export type { DocumentScanResult } from './ingestion/document-scan.js';
+export { scanLitigationLanguage, LITIGATION_LANGUAGE_RULES } from './analysis/litigation-language.js';
+
 // Classification
 export { classifyClaim, detectIntermediateMisclassification } from './classification/classifier.js';
 export { determineBenefitType } from './classification/mhsud-identification.js';

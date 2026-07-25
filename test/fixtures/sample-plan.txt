@@ -1,0 +1,36 @@
+*TEMPLATE*SAMPLE_PLAN*TEMPLATE*
+
+Sample Health Plan
+Effective January 01, 2025
+
+Table of Contents
+Mental Health Care Services ............................ 20
+Substance Abuse Services .............................. 21
+What Is Not Covered ................................... 30
+
+*TOCLVL2*Mental Health Care Services*TOCLVL2*
+
+Prior authorization is required for all outpatient mental health and substance
+use disorder services before benefits are payable.
+
+Inpatient facility services are recommended for patients who are an acute danger
+to themselves or others and are provided only during the acute stabilization phase.
+
+Concurrent review is conducted every 3 days for substance use disorder inpatient
+stays to confirm continued medical necessity.
+
+A written treatment plan must be submitted for mental health services and updated
+every 30 days.
+
+*TOCLVL2*Utilization Management*TOCLVL2*
+
+Precertification is required for all inpatient admissions, both medical/surgical
+and behavioral health, regardless of diagnosis.
+
+*TOCLVL2*What Is Not Covered*TOCLVL2*
+
+Wilderness therapy programs are excluded from coverage.
+
+Services provided by an LMFT or LPC are not covered.
+
+Residential treatment room and board is not covered.

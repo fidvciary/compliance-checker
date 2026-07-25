@@ -31,9 +31,11 @@ export interface WarningSignRule {
   rationale: string;
 }
 
-// Shared vocabulary for scoping detection.
+// Shared vocabulary for scoping detection. Autism/ASD and eating disorders are
+// MH conditions for parity purposes and are included so autism-context passages
+// are recognized as MH/SUD.
 export const MHSUD_TERMS =
-  /(mental health|substance use|substance abuse|behavioral health|psychiatric|psychological|chemical dependency|addiction|\bSUD\b|\bMH\/?SUD\b|\bMH\b)/i;
+  /(mental health|substance use|substance abuse|behavioral health|psychiatric|psychological|chemical dependency|addiction|autism|autism spectrum|\bASD\b|Asperger|eating disorder|\bSUD\b|\bMH\/?SUD\b|\bMH\b)/i;
 
 // Signals that a provision applies to medical/surgical too (parallel application).
 export const APPLIES_TO_BOTH =
@@ -140,9 +142,12 @@ export const WARNING_SIGN_RULES: WarningSignRule[] = [
   {
     id: 'IV.periodic_resubmission',
     category: 'IV',
-    name: 'Periodic treatment-plan resubmission without an M/S analog',
+    name: 'Periodic treatment-plan resubmission/review without an M/S analog',
     mode: 'mhsud_scoped',
-    patterns: [/(resubmit|update|renew).{0,30}(treatment plan).{0,30}(every|each)\s*\d+\s*(day|days|week|weeks)/i, /treatment plan.{0,20}(every|each)\s*\d+\s*(day|days)/i],
+    patterns: [
+      /(resubmit|update|renew|review)\b.{0,50}\btreatment plan\b.{0,50}\b(once\s+)?(every|each|per)\b.{0,12}(day|days|week|weeks|month|months)/i,
+      /\btreatment plan\b.{0,30}\b(every|each)\b.{0,12}(day|days|week|weeks|month|months)/i,
+    ],
     citation: 'DOL Warning Signs, Category IV',
     rationale: 'Periodic treatment-plan resubmission scoped to MH/SUD warrants review.',
   },

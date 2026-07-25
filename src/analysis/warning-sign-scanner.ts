@@ -35,27 +35,41 @@ export interface WarningSignHit {
   rationale: string;
 }
 
-function ruleFires(rule: WarningSignRule, text: string): { fired: boolean; pattern?: string } {
+function ruleFires(rule: WarningSignRule, passage: CandidatePassage): { fired: boolean; pattern?: string } {
+  const text = passage.text;
   const matched = rule.patterns.find((p) => p.test(text));
   if (!matched) return { fired: false };
 
   if (rule.mode === 'intrinsic') {
     return { fired: true, pattern: matched.source };
   }
-  // mhsud_scoped: must mention MH/SUD and must NOT indicate parallel M/S application.
-  const mentionsMhsud = MHSUD_TERMS.test(text);
+  // mhsud_scoped: must be MH/SUD-scoped and must NOT indicate parallel M/S
+  // application. MH/SUD context can come from the passage text OR the section
+  // heading it sits under. But when the MH/SUD context comes ONLY from the
+  // section (the sentence itself has no MH term), also require a real
+  // requirement/imposition cue — otherwise a purely DESCRIPTIVE sentence that
+  // merely sits in a MH/SUD-titled section (e.g., "the program consists of ...
+  // precertification ...") would false-fire. The "applies to both" guard is
+  // tested on the passage text only.
+  const mhInText = MHSUD_TERMS.test(text);
+  const mhInSection = MHSUD_TERMS.test(passage.section ?? '');
   const appliesToBoth = APPLIES_TO_BOTH.test(text);
+  const mentionsMhsud = mhInText || (mhInSection && REQUIREMENT_CUE.test(text));
   if (mentionsMhsud && !appliesToBoth) {
     return { fired: true, pattern: matched.source };
   }
   return { fired: false };
 }
 
+// Language that indicates an actual requirement/imposition (vs. description).
+const REQUIREMENT_CUE =
+  /\b(required|require|requires|must|shall|only|prior to|before|may not|will not|not covered|excluded|limited to|no more than|maximum of|need to obtain|obtain (a |an )?(pre-?cert|pre-?auth|authorization))\b/i;
+
 export function scanPassages(passages: CandidatePassage[], audit?: AuditLog): WarningSignHit[] {
   const hits: WarningSignHit[] = [];
   for (const passage of passages) {
     for (const rule of WARNING_SIGN_RULES) {
-      const { fired, pattern } = ruleFires(rule, passage.text);
+      const { fired, pattern } = ruleFires(rule, passage);
       if (fired) {
         const hit: WarningSignHit = {
           ruleId: rule.id,

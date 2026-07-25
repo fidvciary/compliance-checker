@@ -100,8 +100,14 @@ test/                unit + golden-fixture + adversarial tests
 
 ```bash
 npm install
-npm test                       # run the full test suite (175 tests)
+npm test                       # run the full test suite
 npm run typecheck              # tsc --noEmit
+
+# Upload a plan document (PDF or txt) and get a "what may not be compliant" screen
+npm run parity -- scan-document ./plan.pdf --output ./out
+
+# Start a full DRAFT report from plan document(s)
+npm run parity -- analyze --documents ./plan.pdf --jurisdiction PA --output ./out
 
 # End-to-end demo (synthetic, de-identified) — writes DRAFT reports + audit log
 npm run parity -- analyze --demo --output ./output
