@@ -132,11 +132,21 @@ npm run parity -- rulesets
 npm run parity -- verify-caselaw
 ```
 
-The `analyze` command writes `comparative-analysis.draft.md`,
-`self-compliance-tool.draft.md`, `audit-log.jsonl`, and `summary.json`. Reports
-are **DRAFT** until run through the attorney review gate (`AttorneyReviewGate`:
-submit → dispose each conclusion → approve with identity+bar+content-hash →
-finalize → export FINAL). The CLI emits DRAFT only.
+The `analyze` command writes a **styled, self-contained HTML report**
+(`comparative-analysis.draft.html` + `self-compliance-tool.draft.html`) plus the
+Markdown source, `audit-log.jsonl`, and `summary.json`. Open the HTML in any
+browser and **Print → Save as PDF** for a polished PDF — no external assets, no
+extra tooling. `--format html|md|both` (default `both`). The HTML leads with a
+status banner, an at-a-glance **risk dashboard**, and the top findings, then lays
+out every finding as a colour-coded card ranked by risk, the six-step analyses,
+and the appendices. `scan-document --output ./out` likewise writes
+`document-scan.html`.
+
+Reports are **DRAFT** until run through the attorney review gate
+(`AttorneyReviewGate`: submit → dispose each conclusion → approve with
+identity+bar+content-hash → finalize → export FINAL). The HTML mirrors this: the
+DRAFT banner shows on every AI-drafted conclusion and is suppressed only once
+finalized.
 
 ### Sensitivity & risk ranking
 

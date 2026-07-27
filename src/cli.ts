@@ -6,6 +6,7 @@ import { loadRulesetsFromDir } from './rulesets/loader.js';
 import { loadCaselawFromDir } from './analysis/caselaw/loader.js';
 import { CaselawRegistry } from './analysis/caselaw/registry.js';
 import { renderMarkdown } from './report/report-model.js';
+import { renderReportHtml, renderDocumentScanHtml } from './report/render-html.js';
 import { AttorneyReviewGate } from './attorney/review-gate.js';
 import { buildDemoInput } from './demo.js';
 import { scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages, extractAllChunks } from './ingestion/document-scan.js';
@@ -109,9 +110,19 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
 
   const result = runAnalysis(input);
 
-  // Write DRAFT reports + audit log.
-  writeFileSync(join(outDir, 'comparative-analysis.draft.md'), renderMarkdown(result.comparativeReport));
-  writeFileSync(join(outDir, 'self-compliance-tool.draft.md'), renderMarkdown(result.selfComplianceReport));
+  // Write DRAFT reports + audit log. Default format is a styled HTML doc plus
+  // the Markdown source; --format md|html|both.
+  const format = typeof flags.format === 'string' ? flags.format : 'both';
+  const writeMd = format === 'md' || format === 'both';
+  const writeHtml = format === 'html' || format === 'both';
+  if (writeMd) {
+    writeFileSync(join(outDir, 'comparative-analysis.draft.md'), renderMarkdown(result.comparativeReport));
+    writeFileSync(join(outDir, 'self-compliance-tool.draft.md'), renderMarkdown(result.selfComplianceReport));
+  }
+  if (writeHtml) {
+    writeFileSync(join(outDir, 'comparative-analysis.draft.html'), renderReportHtml(result.comparativeReport));
+    writeFileSync(join(outDir, 'self-compliance-tool.draft.html'), renderReportHtml(result.selfComplianceReport));
+  }
   writeFileSync(join(outDir, 'audit-log.jsonl'), result.audit.toJSONL());
 
   const ranked = result.findings.slice().sort((a, b) => (b.risk?.score ?? 0) - (a.risk?.score ?? 0));
@@ -138,7 +149,14 @@ async function cmdAnalyze(flags: Record<string, string | boolean>): Promise<void
     console.log(`  [risk ${risk.padEnd(12)}] [${f.severity}] (${f.track}${f.advisory ? ', advisory' : ''}) ${f.title}`);
   }
   console.log(`\nReports are DRAFT — NOT a completed comparative analysis until attorney-approved.`);
-  console.log(`Wrote: comparative-analysis.draft.md, self-compliance-tool.draft.md, audit-log.jsonl, summary.json -> ${outDir}`);
+  const wrote = [
+    writeHtml ? 'comparative-analysis.draft.html' : '',
+    writeMd ? 'comparative-analysis.draft.md' : '',
+    writeHtml ? 'self-compliance-tool.draft.html' : '',
+    'audit-log.jsonl', 'summary.json',
+  ].filter(Boolean).join(', ');
+  console.log(`Wrote: ${wrote} -> ${outDir}`);
+  if (writeHtml) console.log(`Open comparative-analysis.draft.html in a browser; Print → Save as PDF for a polished PDF.`);
   console.log(`\nAttorney gate: submit -> dispose each conclusion -> approve (identity + bar + hash) -> finalize -> export FINAL.`);
   void AttorneyReviewGate; // gate is used programmatically / in tests; CLI emits DRAFT only.
 }
@@ -161,8 +179,10 @@ async function cmdScanDocument(flags: Record<string, string | boolean>, position
   console.log(description);
   if (typeof flags.output === 'string') {
     mkdirSync(flags.output, { recursive: true });
-    writeFileSync(join(flags.output, 'document-scan.md'), description);
-    console.log(`\n(Written to ${join(flags.output, 'document-scan.md')})`);
+    const format = typeof flags.format === 'string' ? flags.format : 'both';
+    if (format === 'md' || format === 'both') writeFileSync(join(flags.output, 'document-scan.md'), description);
+    if (format === 'html' || format === 'both') writeFileSync(join(flags.output, 'document-scan.html'), renderDocumentScanHtml(result));
+    console.log(`\n(Written to ${flags.output}: document-scan.html + .md — open the .html in a browser, Print → Save as PDF.)`);
   }
 }
 
@@ -185,8 +205,9 @@ async function main(): Promise<void> {
     default:
       console.log('parity — MHPAEA parity compliance engine\n');
       console.log('Usage:');
-      console.log('  parity scan-document <plan.pdf|plan.txt> [--output ./out]   # upload a plan, get a what-may-not-be-compliant screen');
-      console.log('  parity analyze --demo [--scope both] [--output ./out]');
+      console.log('  parity scan-document <plan.pdf|plan.txt> [--output ./out] [--format html|md|both]   # upload a plan → screen');
+      console.log('  parity analyze --demo [--scope both] [--sensitivity aggressive] [--format html|md|both] [--output ./out]');
+      console.log('  parity analyze --documents <plan.pdf,...> [--sensitivity aggressive] [--output ./out]   # doc → full report');
       console.log('  parity analyze --input <analysis-input.json> --rulesets federal:statute,federal:2013,guidance:* --advisory federal:2024');
       console.log('  parity rulesets');
       console.log('  parity verify-caselaw');

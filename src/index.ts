@@ -95,6 +95,8 @@ export type { Finding, Severity, FindingScope, FindingTrack } from './findings/f
 
 // Reports + attorney gate
 export { renderMarkdown, reportContentHash } from './report/report-model.js';
+export { renderReportHtml, renderDocumentScanHtml } from './report/render-html.js';
+export { mdToHtml } from './report/markdown-lite.js';
 export type { ReportRecord, ReportStatus, EvaluationScope } from './report/report-model.js';
 export { buildComparativeAnalysisReport } from './report/comparative-analysis.js';
 export { buildSelfComplianceToolReport } from './report/self-compliance-tool.js';
