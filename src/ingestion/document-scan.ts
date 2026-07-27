@@ -1,7 +1,7 @@
 import type { PlanDocument } from './document-reader.js';
 import { readPlanDocument } from './document-reader.js';
 import { chunkDocument } from './document-chunker.js';
-import { scanPassages, type WarningSignHit, type CandidatePassage } from '../analysis/warning-sign-scanner.js';
+import { scanPassages, type WarningSignHit, type CandidatePassage, type ScanOptions } from '../analysis/warning-sign-scanner.js';
 import { scanLitigationLanguage, type LitigationLanguageObservation } from '../analysis/litigation-language.js';
 import { extractCostShares, compareCostShareLevels, type CostShareLevelFinding } from './schedule-of-benefits.js';
 
@@ -34,13 +34,13 @@ function normalize(s: string): string {
   return s.toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
-export function scanPlanDocumentText(doc: PlanDocument, documentId?: string): DocumentScanResult {
+export function scanPlanDocumentText(doc: PlanDocument, documentId?: string, scanOpts?: ScanOptions): DocumentScanResult {
   const id = documentId ?? doc.source;
   const passages = chunkDocument(doc, { documentId: id });
 
   // Warning signs (dedup by rule + normalized quote).
   const wsMap = new Map<string, WarningSignHit & { occurrences: number }>();
-  for (const hit of scanPassages(passages)) {
+  for (const hit of scanPassages(passages, undefined, scanOpts)) {
     const key = `${hit.ruleId}::${normalize(hit.passage.text)}`;
     const existing = wsMap.get(key);
     if (existing) existing.occurrences += 1;
@@ -88,9 +88,9 @@ export async function extractAllChunks(filePaths: string[]): Promise<CandidatePa
 }
 
 /** Read a file from disk and scan it. */
-export async function scanPlanDocumentFile(filePath: string, documentId?: string): Promise<DocumentScanResult> {
+export async function scanPlanDocumentFile(filePath: string, documentId?: string, scanOpts?: ScanOptions): Promise<DocumentScanResult> {
   const doc = await readPlanDocument(filePath);
-  return scanPlanDocumentText(doc, documentId);
+  return scanPlanDocumentText(doc, documentId, scanOpts);
 }
 
 /** Extract deduped candidate passages that fired a rule — for wiring into runAnalysis. */

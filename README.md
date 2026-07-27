@@ -98,8 +98,40 @@ test/                unit + golden-fixture + adversarial tests
 
 ## Usage
 
+### The checker (start here)
+
+The product is a **compliance checker**: upload a plan, get the places it may lack
+parity, ranked by risk. It does **not** write a formal report — the deliverable is
+the flagged issues.
+
 ```bash
 npm install
+npm run parity -- serve        # ← web UI at http://127.0.0.1:4732
+```
+
+Then in your browser: pick a mode, drag in your files, tag what each one is, and
+**Check**.
+
+- **As-written only** — upload the benefits plan / schedule of benefits. Flags the
+  plan language (warning signs, litigation-theory language, cost-share gaps).
+- **Everything (in-operation)** — also upload de-identified claims data to flag
+  outcome disparities (denial-rate parity by classification).
+
+Any file type works — **PDF, DOCX, TXT, CSV, XLSX** — and all parsing happens on
+the backend; the browser never parses. Uploaded files (which may include claims)
+are processed **locally** and never leave the machine. Claims files pass through
+the fail-closed PHI gate and are rejected if they contain member PHI.
+
+Prefer the terminal? Same thing, no browser:
+
+```bash
+npm run parity -- check ./plan.pdf                                   # as-written
+npm run parity -- check ./plan.pdf ./claims.csv --scope everything --sensitivity aggressive --output ./out
+```
+
+### Other tools
+
+```bash
 npm test                       # run the full test suite
 npm run typecheck              # tsc --noEmit
 

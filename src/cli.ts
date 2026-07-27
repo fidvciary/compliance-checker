@@ -10,6 +10,11 @@ import { renderReportHtml, renderDocumentScanHtml } from './report/render-html.j
 import { AttorneyReviewGate } from './attorney/review-gate.js';
 import { buildDemoInput } from './demo.js';
 import { scanPlanDocumentFile, describeDocumentScan, extractWarningSignPassages, extractAllChunks } from './ingestion/document-scan.js';
+import { readFileSync as readFileBytes } from 'node:fs';
+import { basename } from 'node:path';
+import { checkCompliance, type CheckScope, type UploadedFile } from './check.js';
+import { renderIssuesHtml } from './report/render-html.js';
+import { startServer } from './ui/server.js';
 
 /**
  * `parity` CLI. Subcommands:
@@ -186,10 +191,50 @@ async function cmdScanDocument(flags: Record<string, string | boolean>, position
   }
 }
 
+async function cmdServe(flags: Record<string, string | boolean>): Promise<void> {
+  const port = typeof flags.port === 'string' ? Number(flags.port) : 4732;
+  startServer({ port });
+  await new Promise(() => {}); // keep the process alive
+}
+
+async function cmdCheck(flags: Record<string, string | boolean>, positional: string[]): Promise<void> {
+  if (positional.length === 0) {
+    console.error('Usage: parity check <plan.pdf> [claims.csv ...] [--scope as-written|everything] [--sensitivity balanced|aggressive] [--jurisdiction CT] [--output ./out]');
+    process.exit(2);
+    return;
+  }
+  const scope: CheckScope = flags.scope === 'everything' ? 'everything' : 'as-written';
+  const files: UploadedFile[] = positional.map((p) => ({ name: basename(p), bytes: readFileBytes(p) }));
+  const result = await checkCompliance(files, {
+    scope,
+    ...(typeof flags.sensitivity === 'string' ? { sensitivity: flags.sensitivity as never } : {}),
+    ...(typeof flags.jurisdiction === 'string' ? { jurisdiction: flags.jurisdiction } : {}),
+  });
+
+  for (const p of result.phiRejections) console.log(`\n${p.report}\n`);
+  console.log(`Parity check (${result.scope}, ${result.sensitivity}) — ${result.issues.length} issue(s) flagged:\n`);
+  for (const f of result.issues) {
+    const risk = f.risk ? `${f.risk.tier} ${f.risk.score}` : '—';
+    console.log(`  [risk ${risk.padEnd(12)}] [${f.severity}] (${f.track}) ${f.title}`);
+  }
+  if (result.issues.length === 0) console.log('  (none flagged in what was analyzed — absence of flags is not a determination of compliance)');
+  if (typeof flags.output === 'string') {
+    mkdirSync(flags.output, { recursive: true });
+    writeFileSync(join(flags.output, 'compliance-check.html'), renderIssuesHtml(result));
+    console.log(`\nWrote compliance-check.html -> ${flags.output} (open in a browser; Print → Save as PDF).`);
+  }
+}
+
 async function main(): Promise<void> {
   const [cmd, ...rest] = process.argv.slice(2);
   const positional = rest.filter((a) => !a.startsWith('--'));
   switch (cmd) {
+    case 'serve':
+      await cmdServe(parseFlags(rest));
+      break;
+    case 'check':
+      await cmdCheck(parseFlags(rest), positional);
+      break;
     case 'analyze':
       await cmdAnalyze(parseFlags(rest));
       break;
@@ -203,8 +248,10 @@ async function main(): Promise<void> {
       cmdVerifyCaselaw();
       break;
     default:
-      console.log('parity — MHPAEA parity compliance engine\n');
+      console.log('parity — MHPAEA parity compliance checker\n');
       console.log('Usage:');
+      console.log('  parity serve [--port 4732]                          # ← web UI: upload a plan, flag issues');
+      console.log('  parity check <plan.pdf> [claims.csv] [--scope as-written|everything] [--sensitivity aggressive] [--output ./out]');
       console.log('  parity scan-document <plan.pdf|plan.txt> [--output ./out] [--format html|md|both]   # upload a plan → screen');
       console.log('  parity analyze --demo [--scope both] [--sensitivity aggressive] [--format html|md|both] [--output ./out]');
       console.log('  parity analyze --documents <plan.pdf,...> [--sensitivity aggressive] [--output ./out]   # doc → full report');

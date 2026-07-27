@@ -8,6 +8,7 @@ import type { RulesetRegistry } from '../rulesets/registry.js';
 import type { QtlDetermination } from '../qtl/types.js';
 import type { CumulativeFinding, DollarLimitFinding } from '../qtl/cumulative.js';
 import type { WarningSignHit, DualAdministratorFinding } from '../analysis/warning-sign-scanner.js';
+import type { LitigationLanguageObservation } from '../analysis/litigation-language.js';
 import type { AsWrittenFinding } from '../analysis/as-written-comparability.js';
 import type { CaselawHit } from '../analysis/caselaw/registry.js';
 import type { RateComparisonResult } from '../in-operation/metrics.js';
@@ -243,6 +244,24 @@ export function fromCaselaw(ctx: SynthesisContext, h: CaselawHit): Finding {
     investigationQuestion: `${h.finding} ${h.venueWeight.rationale} Remediation: ${h.remediation}`,
     title: `Litigation exposure — ${h.caseName}`,
     detail: h.note ? `${h.theory} NOTE: ${h.note}` : h.theory,
+  });
+}
+
+// ---- Litigation-theory language observation (case-law rule inactive) ----
+export function fromLitigationObservation(ctx: SynthesisContext, o: LitigationLanguageObservation): Finding {
+  return make(ctx, {
+    idPrefix: 'LIT',
+    scope: 'as_written',
+    track: 'litigation',
+    authorityRefs: [`caselaw:${o.theoryRuleId}`],
+    evidence: [{ kind: 'document', sourceDocumentId: o.passage.documentId, ...(o.passage.page !== undefined ? { page: o.passage.page } : {}), ...(o.passage.section !== undefined ? { section: o.passage.section } : {}), quotedText: o.passage.text }],
+    severity: 'potential_indicator',
+    // The corresponding case-law rule is INACTIVE pending attorney verification,
+    // so this is a language observation, not a fired rule: low confidence.
+    confidence: 'low',
+    investigationQuestion: `${o.why} (Matches the theory in ${o.caseName}; the rule '${o.theoryRuleId}' is inactive until an attorney verifies the citation and activates it.)`,
+    title: `Litigation-theory language — ${o.label}`,
+    detail: `Plan language: "${o.passage.text}". Theory: ${o.caseName}.`,
   });
 }
 

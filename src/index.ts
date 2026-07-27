@@ -5,7 +5,16 @@
  * map and the seven hard non-negotiables enforced across these exports.
  */
 
-// Pipeline (end-to-end orchestration)
+// Compliance checker (primary: flag issues, no report)
+export { checkCompliance } from './check.js';
+export type { CheckResult, CheckScope, CheckOptions, UploadedFile } from './check.js';
+export { startServer } from './ui/server.js';
+export { renderAppPage } from './ui/page.js';
+export { readAnyDocument, readAnyTable, guessKind, isTableFile, isDocumentFile } from './ingestion/any-file.js';
+export type { UploadKind } from './ingestion/any-file.js';
+export { aggregateClaimsForInOperation } from './in-operation/claims-aggregation.js';
+
+// Pipeline (full orchestration incl. report generation — library capability)
 export { runAnalysis, RULESETS_DIR, CASELAW_DIR } from './pipeline.js';
 export type { AnalysisInput, AnalysisResult } from './pipeline.js';
 export { buildDemoInput } from './demo.js';
@@ -95,7 +104,7 @@ export type { Finding, Severity, FindingScope, FindingTrack } from './findings/f
 
 // Reports + attorney gate
 export { renderMarkdown, reportContentHash } from './report/report-model.js';
-export { renderReportHtml, renderDocumentScanHtml } from './report/render-html.js';
+export { renderReportHtml, renderDocumentScanHtml, renderIssuesHtml } from './report/render-html.js';
 export { mdToHtml } from './report/markdown-lite.js';
 export type { ReportRecord, ReportStatus, EvaluationScope } from './report/report-model.js';
 export { buildComparativeAnalysisReport } from './report/comparative-analysis.js';

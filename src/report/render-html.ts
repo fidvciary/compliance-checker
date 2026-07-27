@@ -3,6 +3,7 @@ import type { Finding, RiskTier } from '../findings/finding.js';
 import { compareSeverity } from '../findings/finding.js';
 import { mdToHtml, escapeHtml } from './markdown-lite.js';
 import type { DocumentScanResult } from '../ingestion/document-scan.js';
+import type { CheckResult } from '../check.js';
 
 /**
  * Self-contained, print-friendly HTML renderer for a ReportRecord.
@@ -287,6 +288,45 @@ function fmtLevel(frType: string, level: number): string {
   if (frType === 'day_limit') return `${level} days`;
   if (frType === 'visit_limit') return `${level} visits`;
   return String(level);
+}
+
+/**
+ * Findings-only HTML for the compliance CHECK (no report). Risk dashboard + the
+ * flagged issues as colour-coded cards, what was checked, and limitations.
+ */
+export function renderIssuesHtml(r: CheckResult): string {
+  const ranked = r.issues.slice().sort(byRisk);
+  const phi = r.phiRejections.length
+    ? `<div class="callout" style="background:var(--critical-bg);border-color:#f0b4ae;border-left-color:var(--critical);color:#7a1c15">
+        <b>⚠ Upload rejected — protected health information detected.</b> The engine fails closed: these file(s) were NOT analyzed.
+        ${r.phiRejections.map((p) => `<div style="margin-top:8px"><b>${escapeHtml(p.file)}</b><pre style="white-space:pre-wrap;font-size:12px;margin:4px 0">${escapeHtml(p.report)}</pre></div>`).join('')}
+      </div>`
+    : '';
+
+  const body = `
+    <h1>Parity compliance check</h1>
+    <p class="sub">Mode: <b>${r.scope === 'everything' ? 'Everything (as-written + in-operation)' : 'As-written only'}</b> · thoroughness: ${escapeHtml(r.sensitivity)} · jurisdiction: ${escapeHtml(r.jurisdiction)}</p>
+    ${phi}
+    <div class="callout"><b>These are flagged issues to review — not determinations of noncompliance or legal advice.</b> Items are ranked by risk (how much a human's attention is warranted). Case-law theories are surfaced as language observations; the underlying rules stay inactive until an attorney verifies them.</div>
+
+    <h2 id="summary">${ranked.length} issue(s) flagged</h2>
+    ${riskDashboard(ranked)}
+
+    <h4>What was checked</h4>
+    <ul>${r.checked.map((c) => `<li>${escapeHtml(c)}</li>`).join('') || '<li class="empty">Nothing was analyzed — check the uploaded files.</li>'}</ul>
+    <details><summary style="cursor:pointer;color:var(--muted);font-size:13px">Limitations &amp; what was not checked</summary>
+      <ul>${r.limitations.map((l) => `<li>${escapeHtml(l)}</li>`).join('')}</ul>
+      ${r.dataAvailability.blocked.length ? `<p class="sub">In-operation tests not runnable (missing data): ${r.dataAvailability.blocked.map((b) => escapeHtml(b.feature.label)).join('; ')}.</p>` : ''}
+    </details>
+
+    <h2>Flagged issues (ranked by risk)</h2>
+    ${ranked.length ? ranked.map((f) => findingCard(f, false)).join('') : '<p class="empty">No issues were flagged in what was analyzed. (Absence of flags is not a determination of compliance — the dollar-weighted FR/QTL math and in-operation analysis may still be required.)</p>'}
+
+    ${r.errors.length ? `<h4>Files that could not be read</h4><ul>${r.errors.map((e) => `<li>${escapeHtml(e.file)}: ${escapeHtml(e.message)}</li>`).join('')}</ul>` : ''}
+
+    <footer>Fidvciary parity checker. Flags potential parity issues for review; not legal advice, not a completed comparative analysis.</footer>
+  `;
+  return htmlShell('Parity compliance check', body);
 }
 
 /** Styled HTML for the "upload a plan document → what may not be compliant" screen. */
